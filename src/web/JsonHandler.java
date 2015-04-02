@@ -12,8 +12,10 @@ public class JsonHandler {
 	
 	public JsonHandler(){}
 	
-	public String generateString() throws IOException{
-		String linkToHandle = "any link we want to open goes here";
+	public String generateString(String zipCode, String numberOfDays) throws IOException{
+		String linkToHandle = "link from openweathermap";
+		//typical link looks like the one below
+		//http://api.openweathermap.org/data/2.5/forecast/daily?q=72032,%20us&units=metric&cnt=16
 		BufferedReader data = opener.openUrl(linkToHandle);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -23,6 +25,7 @@ public class JsonHandler {
 		return json;
 	}
 	
+
 
 	
 	
