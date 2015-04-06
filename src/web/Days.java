@@ -11,7 +11,7 @@ public class Days {
         this.min = temp;
     }
     
-    public void setax(String temp) {
+    public void setMax(String temp) {
         this.max = temp;
     }
     
