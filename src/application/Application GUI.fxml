@@ -31,23 +31,23 @@
          <menus>
             <Menu mnemonicParsing="false" text="Select Forecast">
               <items>
-                <MenuItem fx:id="oneDay" mnemonicParsing="false" onAction="#TodaysForecast" text="Today's Forecast" />
-                  <MenuItem fx:id="fiveDay" mnemonicParsing="false" onAction="#FiveDayForecast" text="5 Day Forecast" />
-                  <MenuItem fx:id="sixteenDay" mnemonicParsing="false" onAction="#SixteenDayForecast" text="16 Day Forecast" />
+                <MenuItem mnemonicParsing="false" onAction="#TodaysForecast" text="Today's Forecast" />
+                  <MenuItem mnemonicParsing="false" onAction="#FiveDayForecast" text="5 Day Forecast" />
+                  <MenuItem mnemonicParsing="false" onAction="#SixteenDayForecast" text="16 Day Forecast" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Refresh Database">
                <items>
-                  <MenuItem fx:id="refresh" mnemonicParsing="false" onAction="#refreshLocation" text="Refresh for Current Location" />
+                  <MenuItem mnemonicParsing="false" onAction="#refreshLocation" text="Refresh for Current Location" />
                </items></Menu>
             <Menu mnemonicParsing="false" text="Test">
               <items>
-                <MenuItem fx:id="test" mnemonicParsing="false" onAction="#testAdding" text="Test Adding to TableView" />
+                <MenuItem mnemonicParsing="false" onAction="#testAdding" text="Test Adding to TableView" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Quit">
                <items>
-                  <MenuItem fx:id="quit" mnemonicParsing="false" onAction="#endApplication" text="Exit Application" />
+                  <MenuItem mnemonicParsing="false" onAction="#endApplication" text="Exit Application" />
                </items></Menu>
          </menus>
       </MenuBar>

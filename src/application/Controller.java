@@ -42,19 +42,6 @@ public class Controller {
 	@FXML
 	private TableColumn windSpeed;
 
-	@FXML
-	private MenuItem oneDay;
-	@FXML
-	private MenuItem fiveDay;
-	@FXML
-	private MenuItem sixteenDay;
-	@FXML
-	private MenuItem refresh;
-	@FXML
-	private MenuItem quit;
-	@FXML
-	private MenuItem test;
-
 	private ObservableList<Day> days;
 	private SqlManager manager;
 	private int numDaysToGet;
