@@ -11,8 +11,11 @@ import java.util.ArrayList;
 
 import models.LocationImpl;
 import sql.SqlContract.Area;
+import sql.SqlContract.Weather;
 
 public class SqlLocationHelper {
+	
+	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2();
 	
 	public SqlLocationHelper(){};
 	
@@ -63,8 +66,29 @@ public class SqlLocationHelper {
 		}
 	}
 	
-	public void zipCodeInLocationTable(int zip_code) {
-		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN " + (zip_code);
-				
+	public boolean zipCodeInLocationTable(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection		
+		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + zip_code + ")";
+		
+		try {
+			return sqlHelper_2.getExecutor().executeQuery(queryZip_code).next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
+	
+	public void deleteWeatherDataForZipCode(int zip_code, String DB_AUTHORITY) { // TODO: convert to PreparedStatement to prevent SQL injection
+		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + zip_code;
+		
+		try {
+			sqlHelper_2.getExecutor().execute(queryRemoveString);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+
 }
