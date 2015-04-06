@@ -2,6 +2,7 @@ package web;
 
 import interfaces.Day;
 
+
 import java.io.IOException;
 
 import models.DayImpl;
@@ -11,7 +12,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonParser {			
+public class JsonParser {	
+	
+	JsonGenerator generator;
+	
+	public JsonParser(String zipCode) throws IOException{
+		String toParse = generator.generateStringForForecast(zipCode, "16");
+		parseJson(toParse);
+	}
 	
 	public static Day[] parseJson( String json ) {
 		ObjectMapper mapper = new ObjectMapper();
