@@ -20,46 +20,40 @@ import sql.SqlContract.Area;
 
 public class SqlHelper {
 
-	final static String DATABASE_NAME = "DB";
-	final static String DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
-	final static int VERSION = 1;
+	String DATABASE_NAME;
+	String DB_AUTHORITY;
 	
-	public SqlHelper() {
+	public SqlHelper(String database_name) {
+		DATABASE_NAME = database_name;
+		DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
 		initializeTables();
 	}
 	
 	private void initializeTables() {
 		Connection con;
 		Statement stat = null;
-
-		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			stat = con.createStatement();
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 		
-		final String CREATE_LOCATION_TABLE = "CREATE TABLE " + Area.TABLE_NAME + 
-				"( " + SqlContract._ID 			+ " INTEGER PRIMARY KEY AUTOINCREMENT" +
-				", " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
+		final String CREATE_LOCATION_TABLE = "CREATE TABLE IF NOT EXISTS " + Area.TABLE_NAME +
+				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
 				", " + Area.COLUMN_CITY 		+ " TEXT)";
 		
-		final String CREATE_DAY_TABLE = "CREATE TABLE " + Weather.TABLE_NAME + " IF NOT EXISTS " +
-				"( " + SqlContract._ID 			+ " INTEGER PRIMARY KEY AUTOINCREMENT" +
-				", " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
+		final String CREATE_DAY_TABLE = "CREATE TABLE IF NOT EXISTS " + Weather.TABLE_NAME +
+				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
 				", " + Weather.COLUMN_DATE 		+ " DATE NOT NULL" +
 				", " + Weather.COLUMN_HIGH_TEMP + " INTEGER NOT NULL" +
 				", " + Weather.COLUMN_LOW_TEMP	+ " INTEGER NOT NULL" +
 				", " + Weather.COLUMN_HUMIDITY	+ " INTEGER NOT NULL" +
 				", " + Weather.COLUMN_WIND_SPEED+ " INTEGER NOT NULL" +
 				")";
-		
+
 		try {
+			Class.forName("org.sqlite.JDBC");
+			con = DriverManager.getConnection(DB_AUTHORITY);
+			stat = con.createStatement();
 			stat.execute(CREATE_LOCATION_TABLE);
 			stat.execute(CREATE_DAY_TABLE);
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -16,7 +16,7 @@ public class SqlManagerImpl implements SqlManager {
 	private SqlHelper helper;
 	
 	public SqlManagerImpl() {
-		helper = new SqlHelper();
+		helper = new SqlHelper("weather-database.db");
 	}
 
 	@Override

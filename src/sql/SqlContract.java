@@ -2,7 +2,6 @@ package sql;
 
 public class SqlContract {
 	
-	public static final String _ID = "id";
 	public static final String COLUMN_ZIP = "zipcode";
 
 	public class Area {
