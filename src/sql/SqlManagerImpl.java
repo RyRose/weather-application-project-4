@@ -10,14 +10,13 @@ import java.util.Date;
 import models.LocationImpl;
 
 
-import web.JsonParser;
+import web.ZipcodeData;
 import interfaces.Day;
 import interfaces.Location;
 import interfaces.SqlManager;
 
 public class SqlManagerImpl implements SqlManager {
 	private SqlHelper helper;
-	private JsonParser parser;
 	
 	public SqlManagerImpl() {
 		helper = new SqlHelper("weather-database.db");
@@ -57,31 +56,27 @@ public class SqlManagerImpl implements SqlManager {
 		if (networkCheck() == false) 
 			return;
 		
-		String zipCodeString = Integer.toString(zip_code);
-		
-		for ( Location location : helper.queryAllLocations() ) {
-			if (location.getZipCode() == zip_code ) {
-				try {
-					parser = new JsonParser(zipCodeString);
-				} catch (IOException e) {
-					throw new IllegalArgumentException("Enter a valid zip_code");
-				}
+		ArrayList<Day> days = null;
 				
-				ArrayList<Day> days = new ArrayList<Day>(); // TODO: replace with api call to get days for zip code
+		for ( Location location : helper.queryAllLocations() ) {
+			if (location.getZipCode() == zip_code ) {	
+				try {
+					days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} // TODO: replace with api call to get days for zip code
 				helper.deleteWeatherDataForZipCode(zip_code);
 				helper.insertIntoDayTable(zip_code, (Day[]) days.toArray());
 				return;
 			}
 		}
-		
-		try {
-			parser = new JsonParser(zipCodeString);
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Enter a valid zip_code");
-		}
 
 		helper.insertIntoLocationTable( new LocationImpl(zip_code, null) );
-		ArrayList<Day> days = new ArrayList<Day>(); // TODO: replace with api call to get days for zip code
+		try {
+			days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		helper.insertIntoDayTable(zip_code, (Day[]) days.toArray());
 	}
 	
