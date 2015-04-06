@@ -19,11 +19,20 @@ public class JsonGenerator {
 	
 	public JsonGenerator(){}
 	
-	public String generateString(String zipCode, String numberOfDays) throws IOException{
+	public String generateStringForForecast(String zipCode, String numberOfDays) throws IOException{
 		String linkToHandle = scheme+authority+pathForecast+zipCode+querryImperial+numberOfDays+querryAccurate;
 		//typical link looks like these two below
 		//http://api.openweathermap.org/data/2.5/forecast/daily?q=72032,%20us&units=imperial&cnt=16&type=accurate
-		BufferedReader data = opener.openUrl(linkToHandle);
+		return openLink(linkToHandle);
+	}
+	
+	public String generateStringForCurrent(String zipCode, String numberOfDays) throws IOException{
+		String currentWeather = scheme+authority+pathCurrent+zipCode+querryImperial+numberOfDays+querryAccurate;
+		return openLink(currentWeather);
+	}
+	
+	String openLink(String link) throws IOException{
+		BufferedReader data = opener.openUrl(link);
 		String line;
 		while((line = data.readLine()) != null){
 		    json = line;
