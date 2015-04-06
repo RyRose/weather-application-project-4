@@ -1,6 +1,6 @@
 package interfaces;
 
-import java.util.Date;
+import java.sql.Date;
 
 public interface Day {
 

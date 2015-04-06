@@ -1,27 +1,19 @@
 package models;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Date;
+import java.sql.Date;
 
 import interfaces.Day;
 
 public class DayImpl implements Day {
 	
 	Date date;
-	int humidity;
-	int wind_speed;
-	int high_temp;
-	int low_temp;
+	double humidity;
+	double wind_speed;
+	double high_temp;
+	double low_temp;
 	
-	public DayImpl( String date, int humidity, int wind_speed, int high_temp, int low_temp) {
-		
-		try {
-			this.date = DateFormat.getInstance().parse(date);
-		} catch (ParseException e) {
-			throw new IllegalArgumentException("Invalid date format.");
-		}
-		
+	public DayImpl( String date, double humidity, double wind_speed, double high_temp, double low_temp) {
+		this.date = Date.valueOf(date);
 		this.humidity = humidity;
 		this.wind_speed = wind_speed;
 		this.high_temp = high_temp;
@@ -35,7 +27,7 @@ public class DayImpl implements Day {
 
 	@Override
 	public String getNameOfDay() {
-		return date.toString().split(" ")[0]; // date.toString returns "dow mon dd hh:mm:ss zzz yyyy"
+		return date.toLocalDate().getDayOfWeek().toString(); // date.toString returns "dow mon dd hh:mm:ss zzz yyyy"
 	}
 
 	@Override
