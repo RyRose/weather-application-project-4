@@ -43,12 +43,14 @@ public class Controller {
 	
 	@FXML
 	public void add() {
+		if (userInput.getText().length() == 0 || userInput.getText() == null) {return;}
+		
 		int userZip = Integer.parseInt(userInput.getText());
 		System.out.println(userZip);
 		userInput.clear();
-		Day newDay = manager.getTodayForZipCode(userZip);
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		
+		Day newDay = manager.getTodayForZipCode(userZip);
 		days.add(newDay);
 		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDt())));
 		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
