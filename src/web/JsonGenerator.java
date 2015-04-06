@@ -17,13 +17,14 @@ public class JsonGenerator {
 	String querryLike = "&type=like", querryAccurate = "&type=accurate";
 	String json;
 	
-	public JsonGenerator(){}
+	//public JsonGenerator(){}
 	
 	public String generateStringForForecast(String zipCode, String numberOfDays) throws IOException{
 		String linkToHandle = scheme+authority+pathForecast+zipCode+querryImperial+numberOfDays+querryAccurate;
 		//typical link looks like these two below
 		//http://api.openweathermap.org/data/2.5/forecast/daily?q=72032,%20us&units=imperial&cnt=16&type=accurate
 		return openLink(linkToHandle);
+		
 	}
 	
 	public String generateStringForCurrent(String zipCode, String numberOfDays) throws IOException{
@@ -37,7 +38,6 @@ public class JsonGenerator {
 		while((line = data.readLine()) != null){
 		    json = line;
 		}
-		System.out.println(json);
 		return json;
 	}
 }
