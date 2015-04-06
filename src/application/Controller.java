@@ -1,14 +1,20 @@
 package application;
 
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
+import models.DayImpl;
 import interfaces.Day;
 import interfaces.SqlManager;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -21,6 +27,8 @@ public class Controller {
 	private TextArea userInput;
 	@FXML
     private TableView<Day> table;
+
+	//Argument added to tables in initialize
 	@FXML
 	private TableColumn date;
 	@FXML
@@ -33,33 +41,109 @@ public class Controller {
 	private TableColumn humidity;
 	@FXML
 	private TableColumn windSpeed;
+
+	@FXML
+	private MenuItem oneDay;
+	@FXML
+	private MenuItem fiveDay;
+	@FXML
+	private MenuItem sixteenDay;
+	@FXML
+	private MenuItem refresh;
+	@FXML
+	private MenuItem quit;
+	@FXML
+	private MenuItem test;
+
 	private ObservableList<Day> days;
 	private SqlManager manager;
+	private int numDaysToGet;
+	private int userZip;
+	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	
 	@FXML
 	public void initialize() {
 		days = FXCollections.observableArrayList();	
+		numDaysToGet = 1;
+		
+		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
+		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
+		temp.setCellValueFactory(new PropertyValueFactory<Day, Double>("current"));
+		high.setCellValueFactory(new PropertyValueFactory<Day, Double>("max"));
+		low.setCellValueFactory(new PropertyValueFactory<Day, Double>("min"));
+		humidity.setCellValueFactory(new PropertyValueFactory<Day, Double>("humidity"));
+		windSpeed.setCellValueFactory(new PropertyValueFactory<Day, Double>("speed"));
+		
+		table.setItems(days);
 	}
 	
 	@FXML
 	public void add() {
-		if (userInput.getText().length() == 0 || userInput.getText() == null) {return;}
+		//Makes sure TextArea is not empty
+		if (userInput.getText().length() == 0 || userInput.getText() == null) {
+			userInput.setPromptText("Please enter a zipcode before pressing the button.");
+			return;
+		}
 		
-		int userZip = Integer.parseInt(userInput.getText());
-		System.out.println(userZip);
+		userZip = Integer.parseInt(userInput.getText());
 		userInput.clear();
-		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		userInput.setPromptText("Enter zip code here.");
 		
-		Day newDay = manager.getTodayForZipCode(userZip);
+		//Checks to see which forecast the manager should grab
+		if (numDaysToGet == 1) {
+			Day newDay = manager.getTodayForZipCode(userZip);
+			addToColumns(newDay);
+		} else {
+			ArrayList<Day> daylist = manager.getNumberOfDaysForZipCode(numDaysToGet, userZip);
+			for (Day newDay : daylist) {addToColumns(newDay);}
+		}
+	}
+	
+	public void addToColumns (Day newDay) {
 		days.add(newDay);
-		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDate())));
-		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
-		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
-		low.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMin())));
-		humidity.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getHumidity())));
-		windSpeed.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getSpeed())));
+	}
+	
+	
+	//The next three methods are based off of the three APIs that we can pull from:
+	//current, five day, and sixteen day forecast. No other options available at this time
+	@FXML
+	public void SixteenDayForecast() {
+		numDaysToGet = 16;
+	}
+	
+	@FXML
+	public void FiveDayForecast() {
+		numDaysToGet = 5;
+	}
+	
+	@FXML
+	public void TodaysForecast() {
+		numDaysToGet = 1;
+	}
+	
+	@FXML
+	public void refreshLocation() {
+		//Checks before hand if userZip is valid or not. Will have to make changes when cities are implemented
+		//Will only work if user has put in a zipcode first
+		if (String.valueOf(userZip).equals("0") || String.valueOf(userZip).length() == 0) {return;}
+		manager.refreshDatabaseForZipCode(userZip);
+	}
+	
+	@FXML
+	public void endApplication(){
+		Platform.exit();
+	}
+	
+	@FXML
+	public void testAdding() {
+		//Creates sql.Date object based off of util.Date object
+		java.util.Date utilDate = new java.util.Date();
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 		
-		table.setItems(days);
+		//Info based on DC weather at 12:44 on 4/6/15
+		Day newDay = new DayImpl(sqlDate, 40.0, 5.56, 21.9, 16.3);
+		
+		addToColumns(newDay);
 	}
 
 	

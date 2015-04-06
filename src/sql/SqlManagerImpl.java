@@ -7,7 +7,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.xml.ws.WebEndpoint;
+import models.LocationImpl;
+
 
 import web.JsonParser;
 import interfaces.Day;
@@ -19,7 +20,7 @@ public class SqlManagerImpl implements SqlManager {
 	private JsonParser parser;
 	
 	public SqlManagerImpl() {
-		helper = new SqlHelper();
+		helper = new SqlHelper("weather-database.db");
 	}
 
 	@Override
@@ -53,30 +54,35 @@ public class SqlManagerImpl implements SqlManager {
 
 	@Override
 	public void refreshDatabaseForZipCode(int zip_code){
-		if (networkCheck() == false) {return;}
+		if (networkCheck() == false) 
+			return;
+		
 		String zipCodeString = Integer.toString(zip_code);
 		
-		ArrayList<Location> locations = helper.queryAllLocations();
-		
-		for ( Location location : locations ) {
+		for ( Location location : helper.queryAllLocations() ) {
 			if (location.getZipCode() == zip_code ) {
 				try {
 					parser = new JsonParser(zipCodeString);
 				} catch (IOException e) {
 					throw new IllegalArgumentException("Enter a valid zip_code");
 				}
-				// TODO: pull from api and delete all rows that have the same zip in Weather Table
-				//   and then insert all the Days into the Weather Table
-				//return;
+				
+				ArrayList<Day> days = new ArrayList<Day>(); // TODO: replace with api call to get days for zip code
+				helper.deleteWeatherDataForZipCode(zip_code);
+				helper.insertIntoDayTable(zip_code, (Day[]) days.toArray());
+				return;
 			}
 		}
+		
 		try {
 			parser = new JsonParser(zipCodeString);
 		} catch (IOException e) {
 			throw new IllegalArgumentException("Enter a valid zip_code");
 		}
-		// TODO: Insert zip code into Location Table
-		//       and then pull from api to get days and insert all of the Days into the Weather Table
+
+		helper.insertIntoLocationTable( new LocationImpl(zip_code, null) );
+		ArrayList<Day> days = new ArrayList<Day>(); // TODO: replace with api call to get days for zip code
+		helper.insertIntoDayTable(zip_code, (Day[]) days.toArray());
 	}
 	
 	@Override

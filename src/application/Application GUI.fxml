@@ -7,7 +7,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
    <center>
-      <TableView fx:id="table" prefHeight="600.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="table" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: #1FBED6;" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="date" prefWidth="225.0" sortable="false" text="Date" />
           <TableColumn fx:id="temp" prefWidth="75.0" sortable="false" text="Temp" />
@@ -18,12 +18,38 @@
         </columns>
       </TableView>
    </center>
-   <top>
+   <bottom>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="userInput" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="500.0" promptText="Enter Zip Code Here" />
+            <TextArea fx:id="userInput" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="500.0" promptText="Enter Zip Code Here" />
             <Button fx:id="add" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="100.0" text="Get Forecast" />
          </children>
       </HBox>
+   </bottom>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+         <menus>
+            <Menu mnemonicParsing="false" text="Select Forecast">
+              <items>
+                <MenuItem fx:id="oneDay" mnemonicParsing="false" onAction="#TodaysForecast" text="Today's Forecast" />
+                  <MenuItem fx:id="fiveDay" mnemonicParsing="false" onAction="#FiveDayForecast" text="5 Day Forecast" />
+                  <MenuItem fx:id="sixteenDay" mnemonicParsing="false" onAction="#SixteenDayForecast" text="16 Day Forecast" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Refresh Database">
+               <items>
+                  <MenuItem fx:id="refresh" mnemonicParsing="false" onAction="#refreshLocation" text="Refresh for Current Location" />
+               </items></Menu>
+            <Menu mnemonicParsing="false" text="Test">
+              <items>
+                <MenuItem fx:id="test" mnemonicParsing="false" onAction="#testAdding" text="Test Adding to TableView" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Quit">
+               <items>
+                  <MenuItem fx:id="quit" mnemonicParsing="false" onAction="#endApplication" text="Exit Application" />
+               </items></Menu>
+         </menus>
+      </MenuBar>
    </top>
 </BorderPane>

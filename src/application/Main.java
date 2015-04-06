@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 
 
 public class Main extends Application {
@@ -18,6 +17,8 @@ public class Main extends Application {
 			Scene scene = new Scene(root,600,625);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
+			//Setting window title
+			primaryStage.setTitle("Weather Application");
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
