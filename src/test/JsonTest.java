@@ -23,9 +23,8 @@ public class JsonTest {
 	@Test
 	public void test1() throws IOException {
 		System.out.println("ok");
-		String toParse =  generator.generateStringForForecast("72032", "2");
+		String toParse =  generator.generateStringForForecast("72032", "16");
 		System.out.println(toParse);
-		parser.parseJson(toParse);
 		
 		System.out.println("hello two");
 		
