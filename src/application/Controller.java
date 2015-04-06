@@ -140,6 +140,12 @@ public class Controller {
 		
 		addToColumns(newDay);
 	}
+	
+	@FXML
+	public void clear() {
+		days.clear();
+		table.setItems(days);
+	}
 
 	
 }
