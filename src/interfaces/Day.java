@@ -12,8 +12,8 @@ public interface Day {
 	public double getCurrent();
 	public void setCurrent(double temp); //current temp
 	
-	public java.util.Date getDt();
-	public void setDt(int dayDate);  //time in unix format
+	public java.util.Date getDate();
+	public void setDate(int dayDate);  //time in unix format
 	
 	public double getMin();
 	public void setMin(double temp);  //lowest temperature
