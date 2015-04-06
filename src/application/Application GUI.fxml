@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.Controller">
    <center>
-      <TableView prefHeight="575.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="table" prefHeight="600.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="date" prefWidth="225.0" sortable="false" text="Date" />
-            <TableColumn fx:id="temp" prefWidth="75.0" sortable="false" text="Temp" />
-          <TableColumn fx:id="high" prefWidth="75.0" sortable="false" text="High" />
+          <TableColumn fx:id="temp" prefWidth="75.0" sortable="false" text="Temp" />
+            <TableColumn fx:id="high" prefWidth="75.0" sortable="false" text="High" />
             <TableColumn fx:id="low" prefWidth="75.0" sortable="false" text="Low" />
             <TableColumn fx:id="humidity" prefWidth="75.0" sortable="false" text="Humidity" />
-            <TableColumn fx:id="windTemp" prefWidth="75.0" sortable="false" text="Wind Speed" />
+            <TableColumn fx:id="windSpeed" prefWidth="75.0" sortable="false" text="Wind Speed" />
         </columns>
       </TableView>
    </center>
    <top>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="userInput" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="465.0" promptText="Enter Zip Code Here" />
-            <Button fx:id="add" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="135.0" text="Get Forecast" />
+            <TextArea fx:id="userInput" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="500.0" promptText="Enter Zip Code Here" />
+            <Button fx:id="add" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="100.0" text="Get Forecast" />
          </children>
       </HBox>
    </top>
