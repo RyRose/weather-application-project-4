@@ -1,9 +1,11 @@
 package application;
 
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import models.DayImpl;
 import interfaces.Day;
 import interfaces.SqlManager;
 import javafx.application.Platform;
@@ -47,6 +49,8 @@ public class Controller {
 	private MenuItem refresh;
 	@FXML
 	private MenuItem quit;
+	@FXML
+	private MenuItem test;
 	private ObservableList<Day> days;
 	private SqlManager manager;
 	private int numDaysToGet;
@@ -61,11 +65,15 @@ public class Controller {
 	
 	@FXML
 	public void add() {
-		if (userInput.getText().length() == 0 || userInput.getText() == null) {return;}
+		if (userInput.getText().length() == 0 || userInput.getText() == null) {
+			userInput.setPromptText("Please enter a zipcode before pressing the button.");
+			return;
+		}
 		
 		userZip = Integer.parseInt(userInput.getText());
 		System.out.println(userZip);
 		userInput.clear();
+		userInput.setPromptText("Enter zip code here.");
 		
 		if (numDaysToGet == 1) {
 			Day newDay = manager.getTodayForZipCode(userZip);
@@ -80,6 +88,7 @@ public class Controller {
 	
 	public void addToColumns (Day newDay) {
 		days.add(newDay);
+		System.out.println(days);
 		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDate())));
 		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
 		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
@@ -105,13 +114,25 @@ public class Controller {
 	
 	@FXML
 	public void refreshLocation() {
-		if (String.valueOf(userZip).length() == 0 || String.valueOf(userZip) == null) {return;}
+		if (String.valueOf(userZip).equals("0") || String.valueOf(userZip).length() == 0) {return;}
 		manager.refreshDatabaseForZipCode(userZip);
 	}
 	
 	@FXML
 	public void endApplication(){
 		Platform.exit();
+	}
+	
+	@FXML
+	public void testAdding() {
+		java.util.Date utilDate = new java.util.Date();
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+		Day newDay = new DayImpl(sqlDate, 100.0, 100.0, 100.0, 100.0);
+		
+		addToColumns(newDay);
+		
+		table.setItems(null);
+		table.setItems(days);
 	}
 
 	

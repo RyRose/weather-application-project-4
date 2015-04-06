@@ -21,7 +21,7 @@
    <bottom>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="userInput" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="500.0" promptText="Enter Zip Code Here" />
+            <TextArea fx:id="userInput" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="500.0" promptText="Enter Zip Code Here" />
             <Button fx:id="add" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="100.0" text="Get Forecast" />
          </children>
       </HBox>
@@ -40,6 +40,11 @@
                <items>
                   <MenuItem fx:id="refresh" mnemonicParsing="false" onAction="#refreshLocation" text="Refresh for Current Location" />
                </items></Menu>
+            <Menu mnemonicParsing="false" text="Test">
+              <items>
+                <MenuItem fx:id="test" mnemonicParsing="false" onAction="#testAdding" text="Test Adding to TableView" />
+              </items>
+            </Menu>
             <Menu mnemonicParsing="false" text="Quit">
                <items>
                   <MenuItem fx:id="quit" mnemonicParsing="false" onAction="#endApplication" text="Exit Application" />
