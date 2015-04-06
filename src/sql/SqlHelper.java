@@ -178,5 +178,10 @@ public class SqlHelper {
 		}
 	}
 	
+	public void zipCodeInLocationTable(int zip_code) {
+		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN " + (zip_code);
+				
+	}
+	
 	
 }
