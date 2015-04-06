@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-public class JsonHandler {
+public class JsonGenerator {
 	UrlOpener opener = new UrlOpener();
 	String scheme = "http://", authority  = "api.openweathermap.org";
 	String pathForecast = "/data/2.5/forecast/daily?q=", pathCurrent = "/data/2.5/find?q=";	
@@ -17,7 +17,7 @@ public class JsonHandler {
 	String querryLike = "&type=like", querryAccurate = "&type=accurate";
 	String json;
 	
-	public JsonHandler(){}
+	public JsonGenerator(){}
 	
 	public String generateString(String zipCode, String numberOfDays) throws IOException{
 		String linkToHandle = scheme+authority+pathForecast+zipCode+querryImperial+numberOfDays+querryAccurate;
@@ -28,10 +28,6 @@ public class JsonHandler {
 		while((line = data.readLine()) != null){
 		    json = line;
 		}
-		//ObjectMapper mapper = new ObjectMapper();
-		//mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		//mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		//String json = mapper.writeValueAsString(data);
 		System.out.println(json);
 		return json;
 	}

@@ -1,7 +1,7 @@
 package models;
 
-import java.sql.Date;
 
+import java.util.Date;
 import interfaces.Day;
 
 public class DayImpl implements Day {
@@ -12,42 +12,33 @@ public class DayImpl implements Day {
 	double high_temp;
 	double low_temp;
 	
-	public DayImpl( String date, double humidity, double wind_speed, double high_temp, double low_temp) {
-		this.date = Date.valueOf(date);
+	public DayImpl( int unixTime, double humidity, double wind_speed, double high_temp, double low_temp) {
+		this.date = new java.util.Date((long)unixTime*1000);
 		this.humidity = humidity;
 		this.wind_speed = wind_speed;
 		this.high_temp = high_temp;
 		this.low_temp = low_temp;
 	}
 
-	@Override
-	public Date getDate() {
-		return date;
-	}
 
-	@Override
-	public String getNameOfDay() {
-		return date.toLocalDate().getDayOfWeek().toString(); // date.toString returns "dow mon dd hh:mm:ss zzz yyyy"
-	}
-
-	@Override
-	public double getHighTemperature() {
-		return high_temp;
-	}
-
-	@Override
-	public double getLowTemperature() {
-		return low_temp;
-	}
-
-	@Override
-	public double getHumidity() {
-		return humidity;
-	}
-
-	@Override
-	public double getWindSpeed() {
-		return wind_speed;
-	}
+	public void setDt(int yawe) {date = new java.util.Date((long)yawe*1000); }
+	public void setMin(double temp) {low_temp = temp; }
+	public void setMax(double temp) {high_temp  = temp;	}
+	public void setHumidity(double currentHumidity) {humidity = currentHumidity;}
+	public void setSpeed(double speed) {wind_speed = speed;	}
 	
+	
+	@Override
+	public java.util.Date getDt() {return date;}
+	@Override
+	public double getHumidity() {return humidity;}
+	@Override
+	public double getMin() {return low_temp;}
+	@Override
+	public double getMax() {return high_temp;}
+	@Override
+	public double getSpeed() {return wind_speed;}
+
+	
+
 }
