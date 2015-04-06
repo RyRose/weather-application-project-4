@@ -1,5 +1,8 @@
 package application;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import interfaces.Day;
 import interfaces.SqlManager;
 import javafx.collections.FXCollections;
@@ -40,15 +43,17 @@ public class Controller {
 	
 	@FXML
 	public void add() {
+		if (userInput.getText().length() == 0 || userInput.getText() == null) {return;}
+		
 		int userZip = Integer.parseInt(userInput.getText());
 		System.out.println(userZip);
 		userInput.clear();
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		
 		Day newDay = manager.getTodayForZipCode(userZip);
-		//This is where we will need to take the zipcode from the user and search from
-		//the database. Will need to finish when the database is built.
 		days.add(newDay);
-		date.setCellValueFactory(new PropertyValueFactory(newDay.getNameOfDay()));
-		temp.setCellValueFactory(new PropertyValueFactory("temp")); //need to implement temp into Day class
+		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDt())));
+		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
 		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
 		low.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMin())));
 		humidity.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getHumidity())));
