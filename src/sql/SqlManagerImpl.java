@@ -7,13 +7,16 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.xml.ws.WebEndpoint;
+
+import web.JsonParser;
 import interfaces.Day;
 import interfaces.Location;
 import interfaces.SqlManager;
 
 public class SqlManagerImpl implements SqlManager {
-	
 	private SqlHelper helper;
+	private JsonParser parser;
 	
 	public SqlManagerImpl() {
 		helper = new SqlHelper();
@@ -49,18 +52,29 @@ public class SqlManagerImpl implements SqlManager {
 	}
 
 	@Override
-	public void refreshDatabaseForZipCode(int zip_code) {
+	public void refreshDatabaseForZipCode(int zip_code){
 		if (networkCheck() == false) {return;}
+		String zipCodeString = Integer.toString(zip_code);
 		
 		ArrayList<Location> locations = helper.queryAllLocations();
 		
 		for ( Location location : locations ) {
 			if (location.getZipCode() == zip_code ) {
-						// TODO: pull from api and delete all rows that have the same zip in Weather Table
-				return;	//       and then insert all the Days into the Weather Table
+				try {
+					parser = new JsonParser(zipCodeString);
+				} catch (IOException e) {
+					throw new IllegalArgumentException("Enter a valid zip_code");
+				}
+				// TODO: pull from api and delete all rows that have the same zip in Weather Table
+				//   and then insert all the Days into the Weather Table
+				//return;
 			}
 		}
-		
+		try {
+			parser = new JsonParser(zipCodeString);
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Enter a valid zip_code");
+		}
 		// TODO: Insert zip code into Location Table
 		//       and then pull from api to get days and insert all of the Days into the Weather Table
 	}
