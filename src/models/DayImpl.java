@@ -23,7 +23,7 @@ public class DayImpl implements Day {
 	}
 
 	@Override
-	public void setDt(int yawe) {date = new java.util.Date((long)yawe*1000); }
+	public void setDate(int num) {date = new java.util.Date((long)num*1000); }
 	@Override
 	public void setMin(double temp) {low_temp = temp; }
 	@Override
@@ -37,7 +37,7 @@ public class DayImpl implements Day {
 	
 	
 	@Override
-	public java.util.Date getDt() {return date;}
+	public java.util.Date getDate() {return date;}
 	@Override
 	public double getHumidity() {return humidity;}
 	@Override
