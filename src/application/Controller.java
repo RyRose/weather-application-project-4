@@ -1,9 +1,13 @@
 package application;
 
+import java.io.File;
+import java.io.InputStream;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import models.DayImpl;
 import interfaces.Day;
@@ -13,12 +17,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class Controller {
 	@FXML
@@ -52,6 +59,7 @@ public class Controller {
 	public void initialize() {
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
+		table.setPlaceholder(new Label("Enter a zipcode in the textarea above in order to get the weather."));
 		
 		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
 		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
