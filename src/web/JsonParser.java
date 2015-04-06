@@ -15,9 +15,7 @@ public class JsonParser {
 	
 	DataAsStringGenerator generator;
 	
-	public JsonParser(String zipCode) throws IOException{
-		// String toParse = generator.generateStringForForecast(zipCode, "16");
-		// parseJson(toParse);
+	public JsonParser() {
 	}
 	
 	public static ArrayList<Day> parseJson( String json ) {
