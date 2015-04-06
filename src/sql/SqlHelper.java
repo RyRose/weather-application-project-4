@@ -30,9 +30,6 @@ public class SqlHelper {
 	}
 	
 	private void initializeTables() {
-		Connection con;
-		Statement stat = null;
-		
 		final String CREATE_LOCATION_TABLE = "CREATE TABLE IF NOT EXISTS " + Area.TABLE_NAME +
 				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
 				", " + Area.COLUMN_CITY 		+ " TEXT)";
@@ -47,20 +44,14 @@ public class SqlHelper {
 				")";
 
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			stat = con.createStatement();
-			stat.execute(CREATE_LOCATION_TABLE);
-			stat.execute(CREATE_DAY_TABLE);
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
+			getExecutor().execute(CREATE_LOCATION_TABLE);
+			getExecutor().execute(CREATE_DAY_TABLE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public ArrayList<Day> queryDaysForZipCode( int zip_code ) {
-		Connection con;
+	public ArrayList<Day> queryDaysForZipCode( int zip_code ) { // TODO: convert to PreparedStatement to prevent SQL injection
 		ResultSet set;
 		ArrayList<Day> days = new ArrayList<Day>();
 		
@@ -76,16 +67,12 @@ public class SqlHelper {
 				
 		
 		try{
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			set = con.prepareStatement(queryJoinString).executeQuery();
+			set = getExecutor().executeQuery(queryJoinString);
 			
 			while (set.next()) {
 				Day day = new DayImpl( Date.valueOf(set.getString(0)), set.getDouble(1), set.getDouble(2), set.getDouble(3), set.getDouble(4));
 				days.add(day);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -172,23 +159,44 @@ public class SqlHelper {
 		}
 	}
 	
-	public boolean zipCodeInLocationTable(int zip_code) {
-		Statement stat;
-		Connection con;
-		
+	public boolean zipCodeInLocationTable(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection		
 		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + zip_code + ")";
 		
+		try {
+			return getExecutor().executeQuery(queryZip_code).next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public void deleteWeatherDataForZipCode(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection
+		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + zip_code;
+		
+		try {
+			getExecutor().execute(queryRemoveString);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private Statement getExecutor() {
+		Statement stat;
+		Connection con;
+
 		try {
 			Class.forName("org.sqlite.JDBC");
 			con = DriverManager.getConnection(DB_AUTHORITY);
 			stat = con.createStatement();
-			return stat.executeQuery(queryZip_code).next();
+			return stat;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 		
-		return false;
+		return null;
 	}
 }
