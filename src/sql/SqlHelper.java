@@ -22,10 +22,22 @@ public class SqlHelper {
 
 	String DATABASE_NAME;
 	String DB_AUTHORITY;
+	Connection connection;
+	
 	
 	public SqlHelper(String database_name) {
 		DATABASE_NAME = database_name;
 		DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			connection = DriverManager.getConnection(DB_AUTHORITY);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
 		initializeTables();
 	}
 	
@@ -81,7 +93,6 @@ public class SqlHelper {
 	}
 	
 	public ArrayList<Location> queryAllLocations() {
-		Connection con;
 		ResultSet set;
 		ArrayList<Location> locations = new ArrayList<Location>();
 		
@@ -89,15 +100,11 @@ public class SqlHelper {
 				"SELECT * FROM " + Area.TABLE_NAME;
 		
 		try{
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			set = con.prepareStatement(queryAllLocations).executeQuery();
+			set = getExecutor().executeQuery(queryAllLocations);
 			while (set.next()) {
 				Location location = new LocationImpl(set.getInt(0), set.getString(1));
 				locations.add(location);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -114,10 +121,8 @@ public class SqlHelper {
 		        "?, ?, ?, ?, ?, ?)";
 
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			con.setAutoCommit(false);
-			insertStatement = con.prepareStatement(insertString);
+			connection.setAutoCommit(false);
+			insertStatement = connection.prepareStatement(insertString);
 
 			for( Day day : days) {
 				insertStatement.setInt(1, zip_code);
@@ -128,9 +133,8 @@ public class SqlHelper {
 				insertStatement.setDouble(6, day.getHumidity());
 				insertStatement.executeUpdate();
 			}
-			con.commit();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -138,22 +142,18 @@ public class SqlHelper {
 	
 	public void insertIntoLocationTable( Location location ) {
 		PreparedStatement insertStatement;
-		Connection con;
 		
 		final String insertString = "INSERT INTO " + Area.TABLE_NAME + " VALUES (" +
 				"?, ?)";
 		
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			con.setAutoCommit(false);
-			insertStatement = con.prepareStatement(insertString);
+			connection.setAutoCommit(false);
+			insertStatement = connection.prepareStatement(insertString);
 			insertStatement.setInt(1, location.getZipCode() );
 			insertStatement.setString(2, location.getCityName() );
 			insertStatement.executeUpdate();
-			con.commit();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -165,7 +165,6 @@ public class SqlHelper {
 		try {
 			return getExecutor().executeQuery(queryZip_code).next();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -183,16 +182,8 @@ public class SqlHelper {
 	}
 	
 	private Statement getExecutor() {
-		Statement stat;
-		Connection con;
-
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			stat = con.createStatement();
-			return stat;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			return connection.createStatement();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
