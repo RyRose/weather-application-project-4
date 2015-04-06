@@ -129,11 +129,6 @@ public class Controller {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 		Day newDay = new DayImpl(sqlDate, 2.0, 3.0, 4.0, 5.0);
-		System.out.println(newDay.getCurrent());
-		System.out.println(newDay.getMax());
-		System.out.println(newDay.getMin());
-		System.out.println(newDay.getHumidity());
-		System.out.println(newDay.getSpeed());
 		
 		addToColumns(newDay);
 		table.setItems(days);
