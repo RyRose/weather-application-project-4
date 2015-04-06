@@ -61,6 +61,7 @@ public class Controller {
 	public void initialize() {
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
+		table.setItems(null);
 	}
 	
 	@FXML
@@ -89,6 +90,7 @@ public class Controller {
 	public void addToColumns (Day newDay) {
 		days.add(newDay);
 		System.out.println(days);
+		System.out.println(df.format(newDay.getDate()));
 		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDate())));
 		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
 		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
@@ -130,8 +132,6 @@ public class Controller {
 		Day newDay = new DayImpl(sqlDate, 100.0, 100.0, 100.0, 100.0);
 		
 		addToColumns(newDay);
-		
-		table.setItems(null);
 		table.setItems(days);
 	}
 
