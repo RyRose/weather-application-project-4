@@ -172,10 +172,23 @@ public class SqlHelper {
 		}
 	}
 	
-	public void zipCodeInLocationTable(int zip_code) {
-		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN " + (zip_code);
-				
+	public boolean zipCodeInLocationTable(int zip_code) {
+		Statement stat;
+		Connection con;
+		
+		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + zip_code + ")";
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			con = DriverManager.getConnection(DB_AUTHORITY);
+			stat = con.createStatement();
+			return stat.executeQuery(queryZip_code).next();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		return false;
 	}
-	
-	
 }

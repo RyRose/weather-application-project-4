@@ -7,7 +7,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.xml.ws.WebEndpoint;
 
 import web.JsonParser;
 import interfaces.Day;

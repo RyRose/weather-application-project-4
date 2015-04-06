@@ -1,10 +1,5 @@
 package interfaces;
 
-import java.sql.Date;
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public interface Day {
 
 	//public Date getDate();
