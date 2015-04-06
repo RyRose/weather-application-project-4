@@ -9,6 +9,8 @@ public interface Day {
 
 	//public Date getDate();
 	//public String getNameOfDay();
+	public double getCurrent();
+	public void setCurrent(double temp); //current temp
 	
 	public java.util.Date getDt();
 	public void setDt(int dayDate);  //time in unix format
