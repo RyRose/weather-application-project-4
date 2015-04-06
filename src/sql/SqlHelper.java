@@ -71,7 +71,8 @@ public class SqlHelper {
 				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_HUMIDITY 	+ 
 				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_WIND_SPEED	+
 				" FROM " 	+ Weather.TABLE_NAME + ", "+ Area.TABLE_NAME 			+
-				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = ";
+				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = " + zip_code +
+				" AND " 	+ Area.TABLE_NAME	 + "." + SqlContract.COLUMN_ZIP		+ " = " + Weather.TABLE_NAME + "." + SqlContract.COLUMN_ZIP;
 				
 		
 		return null;
@@ -93,7 +94,7 @@ public class SqlHelper {
 
 			for( Day day : days) {
 				insertStatement.setInt(1, zip_code);
-				insertStatement.setDate(2, (Date) day.getDt());
+				insertStatement.setDate(2, (Date) day.getDate());
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
 				insertStatement.setDouble(5, day.getSpeed());
