@@ -49,10 +49,10 @@ public class Controller {
 		days.add(newDay);
 		date.setCellValueFactory(new PropertyValueFactory(newDay.getNameOfDay()));
 		temp.setCellValueFactory(new PropertyValueFactory("temp")); //need to implement temp into Day class
-		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getHighTemperature())));
-		low.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getLowTemperature())));
+		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
+		low.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMin())));
 		humidity.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getHumidity())));
-		windSpeed.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getWindSpeed())));
+		windSpeed.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getSpeed())));
 		
 		table.setItems(days);
 	}
