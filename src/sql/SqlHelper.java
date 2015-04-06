@@ -4,6 +4,7 @@ import interfaces.Day;
 import interfaces.Location;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,7 +20,11 @@ public class SqlHelper {
 	final static String DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
 	final static int VERSION = 1;
 	
-	public void initializeTables() {
+	public SqlHelper() {
+		initializeTables();
+	}
+	
+	private void initializeTables() {
 		Connection con;
 		Statement stat = null;
 
@@ -33,6 +38,11 @@ public class SqlHelper {
 			e.printStackTrace();
 		}
 		
+		final String CREATE_LOCATION_TABLE = "CREATE TABLE " + Area.TABLE_NAME + 
+				"( " + SqlContract._ID 			+ " INTEGER PRIMARY KEY AUTOINCREMENT" +
+				", " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
+				", " + Area.COLUMN_CITY 		+ " TEXT)";
+		
 		final String CREATE_DAY_TABLE = "CREATE TABLE " + Weather.TABLE_NAME + " IF NOT EXISTS " +
 				"( " + SqlContract._ID 			+ " INTEGER PRIMARY KEY AUTOINCREMENT" +
 				", " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
@@ -42,22 +52,27 @@ public class SqlHelper {
 				", " + Weather.COLUMN_HUMIDITY	+ " INTEGER NOT NULL" +
 				", " + Weather.COLUMN_WIND_SPEED+ " INTEGER NOT NULL" +
 				")";
-
-		final String CREATE_LOCATION_TABLE = "CREATE TABLE " + Area.TABLE_NAME + 
-				"( " + SqlContract._ID 			+ " INTEGER PRIMARY KEY AUTOINCREMENT" +
-				", " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
-				", " + Area.COLUMN_CITY 	+ " TEXT)";
-
+		
 		try {
-			stat.execute(CREATE_DAY_TABLE);
 			stat.execute(CREATE_LOCATION_TABLE);
+			stat.execute(CREATE_DAY_TABLE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public ArrayList<Day> queryForZipCode( int zip_code, int num_days ) {
+	public ArrayList<Day> queryForZipCode( int zip_code ) {
 		PreparedStatement queryLocationStatement;
+		
+		final String queryJoinString = 
+				"SELECT " 	+ Weather.TABLE_NAME + "." + Weather.COLUMN_DATE 		+
+				", " 		+ Weather.TABLE_NAME + "." + Weather.COLUMN_HIGH_TEMP 	+
+				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_LOW_TEMP 	+
+				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_HUMIDITY 	+ 
+				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_WIND_SPEED	+
+				" FROM " 	+ Weather.TABLE_NAME + ", "+ Area.TABLE_NAME 			+
+				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = ";
+				
 		
 		return null;
 	}
@@ -67,7 +82,7 @@ public class SqlHelper {
 		PreparedStatement insertStatement;
 		Connection con;
 		
-		final String insertString = "INSERT INTO " + DATABASE_NAME + "." + Weather.TABLE_NAME + " VALUES (" +
+		final String insertString = "INSERT INTO " + Weather.TABLE_NAME + " VALUES (" +
 		        "?, ?, ?, ?, ?, ?)";
 
 		try {
@@ -78,14 +93,14 @@ public class SqlHelper {
 
 			for( Day day : days) {
 				insertStatement.setInt(1, zip_code);
-				insertStatement.setDate(2, day.getDate());
-				insertStatement.setDouble(3,  day.getHighTemperature());
-				insertStatement.setDouble(4, day.getLowTemperature());
-				insertStatement.setDouble(5, day.getWindSpeed());
+				insertStatement.setDate(2, (Date) day.getDt());
+				insertStatement.setDouble(3,  day.getMax());
+				insertStatement.setDouble(4, day.getMin());
+				insertStatement.setDouble(5, day.getSpeed());
 				insertStatement.setDouble(6, day.getHumidity());
-				insertStatement.execute();
+				insertStatement.executeUpdate();
 			}
-
+			con.commit();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e1) {
@@ -97,7 +112,7 @@ public class SqlHelper {
 		PreparedStatement insertStatement;
 		Connection con;
 		
-		final String insertString = "INSERT INTO " + DATABASE_NAME + "." + Area.TABLE_NAME + " VALUES (" +
+		final String insertString = "INSERT INTO " + Area.TABLE_NAME + " VALUES (" +
 				"?, ?)";
 		
 		try {
@@ -107,7 +122,7 @@ public class SqlHelper {
 			insertStatement = con.prepareStatement(insertString);
 			insertStatement.setInt(1, location.getZipCode() );
 			insertStatement.setString(2, location.getCityName() );
-			insertStatement.execute();
+			insertStatement.executeUpdate();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e1) {

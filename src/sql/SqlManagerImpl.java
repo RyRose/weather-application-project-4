@@ -12,7 +12,7 @@ public class SqlManagerImpl implements SqlManager {
 	
 	public SqlManagerImpl() {
 		helper = new SqlHelper();
-		helper.initializeTables();
+		refreshDatabase();
 	}
 
 	@Override
@@ -28,6 +28,10 @@ public class SqlManagerImpl implements SqlManager {
 	@Override
 	public Day getSpecificDayForZipCode(Date date, int zip_code) {
 		return null;
+	}
+
+	@Override
+	public void refreshDatabase() {
 	}
 
 	
