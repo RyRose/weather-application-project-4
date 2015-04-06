@@ -1,9 +1,6 @@
 package interfaces;
 
 public interface Day {
-
-	//public Date getDate();
-	//public String getNameOfDay();
 	
 	public double getCurrent();
 	public void setCurrent(double current_temp); //current temp
@@ -23,6 +20,4 @@ public interface Day {
 	
 	public double getSpeed();
 	public void setSpeed(double wind_speed);  //wind speed
-	//void setDt(java.util.Date currentDate);
-	
 }

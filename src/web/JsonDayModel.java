@@ -33,6 +33,7 @@ public class JsonDayModel {
 
     @JsonIgnore
     public Day toDay() {
+    	System.out.println(this);
     	return new DayImpl(date, humidity, windSpeed, temp.maximumTemperature, temp.minimumTemperature);
     }
 

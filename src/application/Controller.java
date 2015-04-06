@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import sql.SqlManagerImpl;
+
 import models.DayImpl;
 import interfaces.Day;
 import interfaces.SqlManager;
@@ -42,7 +44,7 @@ public class Controller {
 	private TableColumn windSpeed;
 
 	private ObservableList<Day> days;
-	private SqlManager manager;
+	private SqlManager manager = new SqlManagerImpl();
 	private int numDaysToGet;
 	private int userZip;
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
