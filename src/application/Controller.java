@@ -61,7 +61,13 @@ public class Controller {
 	public void initialize() {
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
-		table.setItems(null);
+		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
+		temp.setCellValueFactory(new PropertyValueFactory<Day, Double>("current"));
+		high.setCellValueFactory(new PropertyValueFactory<Day, Double>("max"));
+		low.setCellValueFactory(new PropertyValueFactory<Day, Double>("min"));
+		humidity.setCellValueFactory(new PropertyValueFactory<Day, Double>("humidity"));
+		windSpeed.setCellValueFactory(new PropertyValueFactory<Day, Double>("speed"));
+		table.setItems(days);
 	}
 	
 	@FXML
@@ -90,13 +96,6 @@ public class Controller {
 	public void addToColumns (Day newDay) {
 		days.add(newDay);
 		System.out.println(days);
-		System.out.println(df.format(newDay.getDate()));
-		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDate())));
-		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
-		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
-		low.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMin())));
-		humidity.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getHumidity())));
-		windSpeed.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getSpeed())));
 	}
 	
 	@FXML
@@ -129,7 +128,12 @@ public class Controller {
 	public void testAdding() {
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-		Day newDay = new DayImpl(sqlDate, 100.0, 100.0, 100.0, 100.0);
+		Day newDay = new DayImpl(sqlDate, 2.0, 3.0, 4.0, 5.0);
+		System.out.println(newDay.getCurrent());
+		System.out.println(newDay.getMax());
+		System.out.println(newDay.getMin());
+		System.out.println(newDay.getHumidity());
+		System.out.println(newDay.getSpeed());
 		
 		addToColumns(newDay);
 		table.setItems(days);
