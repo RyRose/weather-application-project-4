@@ -52,7 +52,7 @@ public class Controller {
 		
 		Day newDay = manager.getTodayForZipCode(userZip);
 		days.add(newDay);
-		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDt())));
+		date.setCellValueFactory(new PropertyValueFactory(df.format(newDay.getDate())));
 		temp.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getCurrent())));
 		high.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMax())));
 		low.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getMin())));

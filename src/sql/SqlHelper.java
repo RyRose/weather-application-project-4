@@ -93,7 +93,7 @@ public class SqlHelper {
 
 			for( Day day : days) {
 				insertStatement.setInt(1, zip_code);
-				insertStatement.setDate(2, (Date) day.getDt());
+				insertStatement.setDate(2, (Date) day.getDate());
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
 				insertStatement.setDouble(5, day.getSpeed());
