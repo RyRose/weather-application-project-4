@@ -21,6 +21,15 @@ public class DayImpl implements Day {
 		this.low_temp = low_temp;
 		this.current_temp = (low_temp + high_temp)/2;
 	}
+	
+	public DayImpl( java.sql.Date date, double humidity, double wind_speed, double high_temp, double low_temp) {
+		this.date = date;
+		this.humidity = humidity;
+		this.wind_speed = wind_speed;
+		this.high_temp = high_temp;
+		this.low_temp = low_temp;
+		this.current_temp = (low_temp + high_temp)/2;
+	}
 
 	@Override
 	public void setDate(int num) {date = new java.util.Date((long)num*1000); }

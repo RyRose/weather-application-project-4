@@ -7,9 +7,13 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import models.DayImpl;
+import models.LocationImpl;
 
 import sql.SqlContract.Weather;
 import sql.SqlContract.Area;
@@ -61,8 +65,10 @@ public class SqlHelper {
 		}
 	}
 	
-	public ArrayList<Day> queryForZipCode( int zip_code ) {
-		PreparedStatement queryLocationStatement;
+	public ArrayList<Day> queryDaysForZipCode( int zip_code ) {
+		Connection con;
+		ResultSet set;
+		ArrayList<Day> days = new ArrayList<Day>();
 		
 		final String queryJoinString = 
 				"SELECT " 	+ Weather.TABLE_NAME + "." + Weather.COLUMN_DATE 		+
@@ -75,8 +81,48 @@ public class SqlHelper {
 				" AND " 	+ Area.TABLE_NAME	 + "." + SqlContract.COLUMN_ZIP		+ " = " + Weather.TABLE_NAME + "." + SqlContract.COLUMN_ZIP;
 				
 		
-		return null;
+		try{
+			Class.forName("org.sqlite.JDBC");
+			con = DriverManager.getConnection(DB_AUTHORITY);
+			set = con.prepareStatement(queryJoinString).executeQuery();
+			
+			while (set.next()) {
+				Day day = new DayImpl( Date.valueOf(set.getString(0)), set.getDouble(1), set.getDouble(2), set.getDouble(3), set.getDouble(4));
+				days.add(day);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		return days;
 	}
+	
+	public ArrayList<Location> queryAllLocations() {
+		Connection con;
+		ResultSet set;
+		ArrayList<Location> locations = new ArrayList<Location>();
+		
+		final String queryAllLocations = 
+				"SELECT * FROM " + Area.TABLE_NAME;
+		
+		try{
+			Class.forName("org.sqlite.JDBC");
+			con = DriverManager.getConnection(DB_AUTHORITY);
+			set = con.prepareStatement(queryAllLocations).executeQuery();
+			while (set.next()) {
+				Location location = new LocationImpl(set.getInt(0), set.getString(1));
+				locations.add(location);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		return locations;
+	} 
 
 	
 	public void insertIntoDayTable(int zip_code, Day... days) {
@@ -124,10 +170,13 @@ public class SqlHelper {
 			insertStatement.setInt(1, location.getZipCode() );
 			insertStatement.setString(2, location.getCityName() );
 			insertStatement.executeUpdate();
+			con.commit();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-	}	
+	}
+	
+	
 }
