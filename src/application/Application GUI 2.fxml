@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Location 1">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn fx:id="date" prefWidth="225.0" text="Date" />
+                            <TableColumn fx:id="temp" prefWidth="75.0" text="Temp" />
+                              <TableColumn fx:id="high" prefWidth="75.0" text="High" />
+                              <TableColumn fx:id="low" prefWidth="75.0" text="Low" />
+                              <TableColumn fx:id="humidity" prefWidth="75.0" text="Humidity" />
+                              <TableColumn fx:id="windSpeed" prefWidth="75.0" text="Wind Speed" />
+                          </columns>
+                        </TableView>
+                     </center>
+                     <top>
+                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <TextArea fx:id="userInput" prefHeight="200.0" prefWidth="500.0" promptText="Enter Zip Code Here" />
+                              <Button fx:id="add" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="100.0" text="Get Forecast" />
+                           </children>
+                        </HBox>
+                     </top>
+                  </BorderPane>
+               </content>
+          </Tab>
+          <Tab text="+">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>
