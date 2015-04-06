@@ -5,8 +5,8 @@ public class SqlContract {
 	public static final String _ID = "id";
 	public static final String COLUMN_ZIP = "zipcode";
 
-	public class Location {
-		public static final String TABLE_NAME = "location";
+	public class Area {
+		public static final String TABLE_NAME = "area";
 		public static final String COLUMN_CITY = "cityname";
 	}
 	
