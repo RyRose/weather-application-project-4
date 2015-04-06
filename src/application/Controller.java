@@ -40,7 +40,7 @@ public class Controller {
 	
 	@FXML
 	public void add() {
-		/*int userZip = Integer.parseInt(userInput.getText());
+		int userZip = Integer.parseInt(userInput.getText());
 		System.out.println(userZip);
 		userInput.clear();
 		Day newDay = manager.getTodayForZipCode(userZip);
@@ -54,7 +54,7 @@ public class Controller {
 		humidity.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getHumidity())));
 		windSpeed.setCellValueFactory(new PropertyValueFactory(Double.toString(newDay.getWindSpeed())));
 		
-		table.setItems(days);*/
+		table.setItems(days);
 	}
 
 	
