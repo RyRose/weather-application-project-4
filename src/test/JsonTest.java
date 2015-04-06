@@ -11,7 +11,7 @@ import web.JsonParser;
 
 public class JsonTest {
 	private web.JsonParser parser;
-	private web.JsonGenerator generator = new web.JsonGenerator();
+	private web.DataAsStringGenerator generator = new web.DataAsStringGenerator();
 	
 	
 	//@Before

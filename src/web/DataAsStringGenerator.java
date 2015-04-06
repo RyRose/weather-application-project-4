@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-public class JsonGenerator {
+public class DataAsStringGenerator {
 	UrlOpener opener = new UrlOpener();
 	String scheme = "http://", authority  = "api.openweathermap.org";
 	String pathForecast = "/data/2.5/forecast/daily?q=", pathCurrent = "/data/2.5/find?q=";	

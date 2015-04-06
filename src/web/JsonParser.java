@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonParser {	
 	
-	JsonGenerator generator;
+	DataAsStringGenerator generator;
 	
 	public JsonParser(String zipCode) throws IOException{
 		// String toParse = generator.generateStringForForecast(zipCode, "16");
