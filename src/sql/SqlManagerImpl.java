@@ -1,5 +1,9 @@
 package sql;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -46,7 +50,7 @@ public class SqlManagerImpl implements SqlManager {
 
 	@Override
 	public void refreshDatabaseForZipCode(int zip_code) {
-		// TODO: Stick a check in for network access that returns 
+		if (networkCheck() == false) {return;}
 		
 		ArrayList<Location> locations = helper.queryAllLocations();
 		
@@ -59,6 +63,20 @@ public class SqlManagerImpl implements SqlManager {
 		
 		// TODO: Insert zip code into Location Table
 		//       and then pull from api to get days and insert all of the Days into the Weather Table
+	}
+	
+	@Override
+	public boolean networkCheck() {
+		try {
+			final URL url = new URL("http://openweathermap.org/");
+			final URLConnection conn = url.openConnection();
+			conn.connect();
+			return true;
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			return false;
+		}
 	}
 	
 }

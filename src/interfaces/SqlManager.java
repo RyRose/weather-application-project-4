@@ -11,4 +11,6 @@ public interface SqlManager {
 	public Day getTodayForZipCode( int zip_code );
 	public Day getSpecificDayForZipCode(Date date, int zip_code);
 
+	boolean networkCheck();
+
 }
