@@ -6,9 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-
-import sql.SqlContract.Weather;
 
 public class SqlHelper_2 {
 	
@@ -40,7 +37,8 @@ public class SqlHelper_2 {
 	}
 	
 	public void insertIntoLocationTable(){
-		locationHelper.insertIntoLocationTable(DB_AUTHORITY); // Location Array needs to be passed
+		
+		locationHelper.insertIntoLocationTable(null, DB_AUTHORITY); // Location Array needs to be passed
 	}
 	
 	public void zipCodeInLocationTable(int zip_code){
@@ -48,14 +46,8 @@ public class SqlHelper_2 {
 		locationHelper.zipCodeInLocationTable(zip_code);
 	}
 	
-	public void deleteWeatherDataForZipCode(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection
-		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + zip_code;
-		
-		try {
-			getExecutor().execute(queryRemoveString);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void deleteWeatherDataForZipCode(int zip_code, String DB_AUTHORITY){
+		locationHelper.deleteWeatherDataForZipCode(zip_code, DB_AUTHORITY);
 	}
 	
 	public Statement getExecutor() {
@@ -75,5 +67,4 @@ public class SqlHelper_2 {
 		
 		return null;
 	}
-
 }
