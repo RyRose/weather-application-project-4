@@ -1,9 +1,15 @@
 package application;
 
+import interfaces.Day;
+import web.JsonHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class Controller {
 	@FXML
@@ -11,7 +17,7 @@ public class Controller {
 	@FXML
 	private TextArea userInput;
 	@FXML
-	private TableColumn zipcode;
+    private TableView<Day> table;
 	@FXML
 	private TableColumn date;
 	@FXML
@@ -23,27 +29,27 @@ public class Controller {
 	@FXML
 	private TableColumn humidity;
 	@FXML
-	private TableColumn windTemp;
-	@FXML
-	private TableColumn rainPCT;
-	
-	Model model = new Model();
+	private TableColumn windSpeed;
+	private ObservableList<Day> days;
 	
 	@FXML
-	private void initialize() {
-		zipcode.getColumns().addAll(model.getZipCodes());
-		date.getColumns().addAll(model.getDates());
-		temp.getColumns().addAll(model.getTemps());
-		high.getColumns().addAll(model.getHighs());
-		low.getColumns().addAll(model.getLows());
-		humidity.getColumns().addAll(model.getHumidity());
-		windTemp.getColumns().addAll(model.getWindTemps());
-		rainPCT.getColumns().addAll(model.getRainPCTS());
+	public void initialize() {
+		days = FXCollections.observableArrayList();
+		/*zipcode.setCellValueFactory(new PropertyValueFactory("zipcode"));
+		date.setCellValueFactory(new PropertyValueFactory("date"));
+		temp.setCellValueFactory(new PropertyValueFactory("temp"));
+		high.setCellValueFactory(new PropertyValueFactory("high"));
+		low.setCellValueFactory(new PropertyValueFactory("low"));
+		humidity.setCellValueFactory(new PropertyValueFactory("humidity"));
+		windTemp.setCellValueFactory(new PropertyValueFactory("windTemp"));
+		rainPCT.setCellValueFactory(new PropertyValueFactory("rainPCT"));*/
+		
 	}
 	
 	@FXML
 	public void add() {
 		String userZip = userInput.getText();
+		System.out.println(userZip);
 		userInput.clear();
 		//This is where we will need to take the zipcode from the user and search from
 		//the database. Will need to finish when the database is built.
