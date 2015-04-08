@@ -7,13 +7,13 @@ import java.util.ArrayList;
 
 public class ZipcodeData {
 	
-	private static web.JsonParser parsor = new web.JsonParser();
+	private static web.JsonParser parser;
+	private static web.DataAsStringGenerator generator = new web.DataAsStringGenerator();
 	
 	
 	public static ArrayList<Day> getDays (String zipCode, int days) throws IOException{
-		DataAsStringGenerator datagenerator = new DataAsStringGenerator();
-		String data = datagenerator.generateStringForCurrent(zipCode, Integer.toString(days));
-		return parsor.parseJson(data);
+		String data = generator.generateStringForForecast(zipCode, Integer.toString(days));
+		return parser.parseJson(data);
 	}
 
 }
