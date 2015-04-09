@@ -10,13 +10,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class JsonDayModel {
 		
     @JsonProperty("dt")
-    public Integer date;
+    public long date;
     
     @JsonProperty("pressure")
     public double pressure;
     
     @JsonProperty("humidity")
-    public Integer humidity;
+    public double humidity;
     
     @JsonProperty("speed")
     public double windSpeed;
@@ -33,8 +33,7 @@ public class JsonDayModel {
 
     @JsonIgnore
     public Day toDay() {
-    	System.out.println(this);
-    	return new DayImpl(date, humidity, windSpeed, temp.maximumTemperature, temp.minimumTemperature);
+    	return new DayImpl(date*1000, humidity, windSpeed, temp.maximumTemperature, temp.minimumTemperature);
     }
 
     private static class Temperature {

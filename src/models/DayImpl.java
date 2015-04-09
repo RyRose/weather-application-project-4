@@ -12,23 +12,20 @@ public class DayImpl implements Day {
 	double high_temp;
 	double low_temp;
 	double current_temp;
-	
-	public DayImpl( int unixTime, double humidity, double wind_speed, double high_temp, double low_temp) {
-		this.date = new java.util.Date((long)unixTime*1000);
+		
+	public DayImpl(long unixTime, double humidity, double wind_speed, double high_temp, double low_temp) {
+		this.date = new java.util.Date( unixTime );
 		this.humidity = humidity;
 		this.wind_speed = wind_speed;
 		this.high_temp = high_temp;
 		this.low_temp = low_temp;
 		this.current_temp = (low_temp + high_temp)/2;
 	}
-	
-	public DayImpl( java.sql.Date date, double humidity, double wind_speed, double high_temp, double low_temp) {
-		this.date = date;
-		this.humidity = humidity;
-		this.wind_speed = wind_speed;
-		this.high_temp = high_temp;
-		this.low_temp = low_temp;
-		this.current_temp = (low_temp + high_temp)/2;
+
+	@Override
+	public String toString() {
+		return "DayImpl: { " + "date: " + date + ", humidity: " + humidity + ", windSpeed: " + wind_speed + 
+				", high_temp: " + high_temp + ", low_temp: " + low_temp + ", current_temp: " + current_temp + " }";
 	}
 
 	@Override
@@ -46,7 +43,7 @@ public class DayImpl implements Day {
 	
 	
 	@Override
-	public java.util.Date getDate() {return date;}
+	public Date getDate() {return date;}
 	@Override
 	public double getHumidity() {return humidity;}
 	@Override
@@ -57,7 +54,4 @@ public class DayImpl implements Day {
 	public double getCurrent() {return current_temp;}
 	@Override
 	public double getSpeed() {return wind_speed;}
-
-	
-
 }

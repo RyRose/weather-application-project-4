@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import sql.SqlManagerImpl;
 
@@ -83,7 +84,7 @@ public class Controller {
 			Day newDay = manager.getTodayForZipCode(userZip);
 			addToColumns(newDay);
 		} else {
-			ArrayList<Day> daylist = manager.getNumberOfDaysForZipCode(numDaysToGet, userZip);
+			List<Day> daylist = manager.getNumberOfDaysForZipCode(numDaysToGet, userZip);
 			for (Day newDay : daylist) {addToColumns(newDay);}
 		}
 	}
@@ -130,7 +131,7 @@ public class Controller {
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 		
 		//Info based on DC weather at 12:44 on 4/6/15
-		Day newDay = new DayImpl(sqlDate, 40.0, 5.56, 21.9, 16.3);
+		Day newDay = new DayImpl(sqlDate.getTime(), 40.0, 5.56, 21.9, 16.3);
 		
 		addToColumns(newDay);
 	}

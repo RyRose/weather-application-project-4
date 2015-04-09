@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import models.LocationImpl;
 
@@ -19,15 +20,15 @@ public class SqlManagerImpl implements SqlManager {
 	private SqlHelper helper;
 	
 	public SqlManagerImpl() {
-		helper = new SqlHelper("weather-database.db");
+		helper = new SqlHelper("weather6-db.db");
 	}
 
 	@Override
-	public ArrayList<Day> getNumberOfDaysForZipCode(int num_days, int zip_code) {
+	public List<Day> getNumberOfDaysForZipCode(int num_days, int zip_code) {
 		refreshDatabaseForZipCode(zip_code);
 		
 		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);
-		return (ArrayList<Day>) days.subList(0, num_days);
+		return days.subList(0, num_days);
 	}
 
 	@Override
@@ -53,31 +54,35 @@ public class SqlManagerImpl implements SqlManager {
 
 	@Override
 	public void refreshDatabaseForZipCode(int zip_code){
+		System.out.println("refreshing database");
 		if (networkCheck() == false) 
 			return;
 		
 		ArrayList<Day> days = null;
-				
+		
 		for ( Location location : helper.queryAllLocations() ) {
-			if (location.getZipCode() == zip_code ) {	
+			if (location.getZipCode() == zip_code ) {
+				System.out.println("location in database");
 				try {
 					days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
 				} catch (IOException e) {
 					e.printStackTrace();
-				} // TODO: replace with api call to get days for zip code
+				}
 				helper.deleteWeatherDataForZipCode(zip_code);
-				helper.insertIntoDayTable(zip_code, (Day[]) days.toArray());
+				helper.insertIntoDayTable(zip_code,  days);
 				return;
 			}
 		}
-
+		
+		System.out.println("location not in database");
 		helper.insertIntoLocationTable( new LocationImpl(zip_code, null) );
 		try {
 			days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		helper.insertIntoDayTable(zip_code, (Day[]) days.toArray());
+		
+		helper.insertIntoDayTable(zip_code, days);
 	}
 	
 	@Override

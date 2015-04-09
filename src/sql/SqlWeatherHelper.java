@@ -64,7 +64,7 @@ public class SqlWeatherHelper {
 			set = con.prepareStatement(queryJoinString).executeQuery();
 			
 			while (set.next()) {
-				Day day = new DayImpl( Date.valueOf(set.getString(0)), set.getDouble(1), set.getDouble(2), set.getDouble(3), set.getDouble(4));
+				Day day = new DayImpl( set.getLong(1), set.getDouble(1), set.getDouble(2), set.getDouble(3), set.getDouble(4));
 				days.add(day);
 			}
 		} catch (ClassNotFoundException e) {
