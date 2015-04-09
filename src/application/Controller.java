@@ -6,11 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import sql.SqlManagerImpl;
+import sql.DatabaseManagerImpl;
 
 import models.DayImpl;
 import interfaces.Day;
-import interfaces.SqlManager;
+import interfaces.DatabaseManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,7 +45,7 @@ public class Controller {
 	private TableColumn windSpeed;
 
 	private ObservableList<Day> days;
-	private SqlManager manager = new SqlManagerImpl();
+	private DatabaseManager manager = new DatabaseManagerImpl();
 	private int numDaysToGet;
 	private int userZip;
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -81,10 +81,10 @@ public class Controller {
 		
 		//Checks to see which forecast the manager should grab
 		if (numDaysToGet == 1) {
-			Day newDay = manager.getTodayForZipCode(userZip);
+			Day newDay = manager.getToday(userZip);
 			addToColumns(newDay);
 		} else {
-			List<Day> daylist = manager.getNumberOfDaysForZipCode(numDaysToGet, userZip);
+			List<Day> daylist = manager.getDays(numDaysToGet, userZip);
 			for (Day newDay : daylist) {addToColumns(newDay);}
 		}
 	}

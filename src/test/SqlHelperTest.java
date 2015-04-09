@@ -3,86 +3,123 @@ package test;
 import static org.junit.Assert.*;
 
 
+import interfaces.Day;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import models.DayImpl;
 import models.LocationImpl;
 
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
+import sql.SqlContract;
 import sql.SqlContract.Area;
 import sql.SqlContract.Weather;
 import sql.SqlHelper;
 
 public class SqlHelperTest {
 	
-	private final String DATABASE_NAME = "sqlhelpertest.db";
+	private final String DATABASE_NAME = "test.db";
 	private final String DATABASE_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
 	
-	SqlHelper helper = new SqlHelper(DATABASE_NAME);
+	SqlHelper helper;
+	Connection connection;
 	
-	@Test
-	public void firstTest() throws ClassNotFoundException {
+	@Before
+	public void Before() throws ClassNotFoundException {
+		System.out.println("Before");
 		Class.forName("org.sqlite.JDBC");
-		closeTables();
+		helper = new SqlHelper(DATABASE_NAME);
+		connection = getConnection();
+	}
+	
+	@After
+	public void After() throws SQLException {
+		connection.close();
+		
+		connection = getConnection();
+		Statement statement = connection.createStatement();
+		statement.execute("DROP TABLE IF EXISTS " + SqlContract.Area.TABLE_NAME);
+		statement.execute("DROP TABLE IF EXISTS " + SqlContract.Weather.TABLE_NAME);
+		connection.close();
 	}
 	
 	@Test
 	public void testInitializing() {
 		try {
-			assertFalse(getSqlExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME).next());
-			assertFalse(getSqlExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME).next());
+			assertFalse(getExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME).next());
+			assertFalse(getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME).next());
 		} catch (SQLException e) {
 			throw new RuntimeException();
 		}
 	}
 	
 	@Test
-	public void testInsertion() {
+	public void testLocationInsertion() {
 		helper.insertIntoLocationTable(new LocationImpl(8675309, null));
-		
 		try {
-			assertTrue(getSqlExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME).next());
-			assertFalse(getSqlExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME).next());
+			assertTrue(getExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME).next());
+			assertFalse(getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME).next());
 		} catch (SQLException e) {
 			throw new RuntimeException();
 		}
+	}
+	
+	@Test
+	public void testDayInsertion() { // TODO
+		helper.insertIntoDayTable(00000, getDays(100));
+	}
+	
+	@Test
+	public void testZipCodeInTable() { // TODO
 		
 	}
 	
-	private Statement getSqlExecutor() {
-		Connection con;
+	@Test
+	public void testDeleteWeather() { // TODO
 		
+	}
+	
+	@Test
+	public void testQueryingLocations() { // TODO
+		
+	}
+	
+	@Test
+	public void testQueryingDays() { // TODO
+		
+	}
+	
+	private ArrayList<Day> getDays( int num_days ) {
+		ArrayList<Day> list = new ArrayList<Day>();
+		
+		for (int i = 0; i < num_days; i++)
+			list.add( new DayImpl() );
+		
+		return list;
+	}
+	
+	private Connection getConnection() {
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DATABASE_AUTHORITY);
-			return con.createStatement();
-		} catch (ClassNotFoundException e1) {
+			return DriverManager.getConnection(DATABASE_AUTHORITY);
+		} catch (SQLException e1) {
 			e1.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		
-		throw new RuntimeException();
+		return null;
 	}
 	
-	private void closeTables() {
-		Connection con;
-		Statement stat;
-
+	private Statement getExecutor() {
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DATABASE_AUTHORITY);
-			stat = con.createStatement();
-			stat.execute("DROP TABLE IF EXISTS " + Weather.TABLE_NAME);
-			stat.execute("DROP TABLE IF EXISTS " + Area.TABLE_NAME);
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+			return connection.createStatement();
+		} catch (SQLException e) {}
+		
+		return null;
 	}
-	
 }

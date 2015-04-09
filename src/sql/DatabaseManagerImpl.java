@@ -14,17 +14,17 @@ import models.LocationImpl;
 import web.ZipcodeData;
 import interfaces.Day;
 import interfaces.Location;
-import interfaces.SqlManager;
+import interfaces.DatabaseManager;
 
-public class SqlManagerImpl implements SqlManager {
+public class DatabaseManagerImpl implements DatabaseManager {
 	private SqlHelper helper;
 	
-	public SqlManagerImpl() {
+	public DatabaseManagerImpl() {
 		helper = new SqlHelper("weather.db");
 	}
 
 	@Override
-	public List<Day> getNumberOfDaysForZipCode(int num_days, int zip_code) {
+	public List<Day> getDays(int num_days, int zip_code) {
 		refreshDatabaseForZipCode(zip_code);
 		
 		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);
@@ -32,7 +32,7 @@ public class SqlManagerImpl implements SqlManager {
 	}
 
 	@Override
-	public Day getTodayForZipCode(int zip_code) {
+	public Day getToday(int zip_code) {
 		refreshDatabaseForZipCode(zip_code);
 		
 		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);
@@ -40,7 +40,7 @@ public class SqlManagerImpl implements SqlManager {
 	}
 
 	@Override
-	public Day getSpecificDayForZipCode(Date date, int zip_code) {
+	public Day getSpecificDay(Date date, int zip_code) {
 		refreshDatabaseForZipCode(zip_code);
 		
 		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);

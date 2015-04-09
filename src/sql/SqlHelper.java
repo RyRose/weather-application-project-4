@@ -45,7 +45,7 @@ public class SqlHelper {
 		
 		final String CREATE_DAY_TABLE = "CREATE TABLE IF NOT EXISTS " + Weather.TABLE_NAME +
 				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
-				", " + Weather.COLUMN_DATE 		+ " TEXT NOT NULL" +
+				", " + Weather.COLUMN_DATE 		+ " BIGINT NOT NULL" +
 				", " + Weather.COLUMN_HIGH_TEMP + " REAL NOT NULL" +
 				", " + Weather.COLUMN_LOW_TEMP	+ " REAL NOT NULL" +
 				", " + Weather.COLUMN_HUMIDITY	+ " REAL NOT NULL" +

@@ -12,7 +12,9 @@ public class DayImpl implements Day {
 	double high_temp;
 	double low_temp;
 	double current_temp;
-		
+	
+	public DayImpl() {}
+	
 	public DayImpl(long unixTime, double humidity, double wind_speed, double high_temp, double low_temp) {
 		this.date = new java.util.Date( unixTime );
 		this.humidity = humidity;
