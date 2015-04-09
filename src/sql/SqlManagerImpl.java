@@ -20,7 +20,7 @@ public class SqlManagerImpl implements SqlManager {
 	private SqlHelper helper;
 	
 	public SqlManagerImpl() {
-		helper = new SqlHelper("weather6-db.db");
+		helper = new SqlHelper("weather.db");
 	}
 
 	@Override
@@ -54,7 +54,6 @@ public class SqlManagerImpl implements SqlManager {
 
 	@Override
 	public void refreshDatabaseForZipCode(int zip_code){
-		System.out.println("refreshing database");
 		if (networkCheck() == false) 
 			return;
 		
@@ -62,7 +61,6 @@ public class SqlManagerImpl implements SqlManager {
 		
 		for ( Location location : helper.queryAllLocations() ) {
 			if (location.getZipCode() == zip_code ) {
-				System.out.println("location in database");
 				try {
 					days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
 				} catch (IOException e) {
@@ -74,8 +72,8 @@ public class SqlManagerImpl implements SqlManager {
 			}
 		}
 		
-		System.out.println("location not in database");
 		helper.insertIntoLocationTable( new LocationImpl(zip_code, null) );
+		
 		try {
 			days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
 		} catch (IOException e) {
