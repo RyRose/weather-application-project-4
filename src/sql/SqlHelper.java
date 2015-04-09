@@ -63,7 +63,7 @@ public class SqlHelper {
 		}
 	}
 	
-	public ArrayList<Day> queryDaysForZipCode( int zip_code ) { // TODO: convert to PreparedStatement to prevent SQL injection
+	public ArrayList<Day> queryDaysForZipCode( int zip_code ) {
 		Connection connection = getConnection();
 		ResultSet set;
 		ArrayList<Day> days = new ArrayList<Day>();
@@ -75,16 +75,15 @@ public class SqlHelper {
 				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_HUMIDITY 	+ 
 				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_WIND_SPEED	+
 				" FROM " 	+ Weather.TABLE_NAME + ", "+ Area.TABLE_NAME 			+
-				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = " + zip_code +
+				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = " + "?" +
 				" AND " 	+ Area.TABLE_NAME	 + "." + SqlContract.COLUMN_ZIP		+ " = " + Weather.TABLE_NAME + "." + SqlContract.COLUMN_ZIP;
 				
 		try{
-			set = connection.createStatement().executeQuery(queryJoinString);
-			while (set.next()) {
-				
-				 System.out.println("Querying db -> date: " + set.getString(1) + "| high: " +
-						set.getDouble(2) + "| low: " + set.getDouble(3) + "| humidity: " + set.getDouble(4) + "| wind: " + set.getDouble(5));
-				
+			PreparedStatement stat = connection.prepareStatement(queryJoinString);
+			stat.setInt(1, zip_code);
+			
+			set = stat.executeQuery();
+			while (set.next()) {				
 				Day day = new DayImpl( set.getLong(1), set.getDouble(4), set.getDouble(5), set.getDouble(2), set.getDouble(3));
 				days.add(day);
 			}
@@ -173,13 +172,15 @@ public class SqlHelper {
 		}
 	}
 	
-	public boolean zipCodeInLocationTable(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection	
+	public boolean zipCodeInLocationTable(int zip_code) {
 		Connection connection = getConnection();
 		
-		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + zip_code + ")";
+		final String queryZipCode = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + "?" + ")";
 		
 		try {
-			return connection.createStatement().executeQuery(queryZip_code).next();
+			PreparedStatement stat = connection.prepareStatement(queryZipCode);
+			stat.setInt(1, zip_code);
+			return stat.executeQuery().next();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -189,13 +190,15 @@ public class SqlHelper {
 		return false;
 	}
 	
-	public void deleteWeatherDataForZipCode(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection
+	public void deleteWeatherDataForZipCode(int zip_code) {
 		Connection connection = getConnection();
 		
-		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + zip_code;
+		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + "?";
 		
 		try {
-			connection.createStatement().execute(queryRemoveString);
+			PreparedStatement stat = connection.prepareStatement(queryRemoveString);
+			stat.setInt(1, zip_code);
+			stat.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
