@@ -5,7 +5,7 @@ import interfaces.Day;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 
 public class SqlHelper_2 {
 	
@@ -32,7 +32,7 @@ public class SqlHelper_2 {
 		locationHelper.queryAllLocations(DB_AUTHORITY);
 	}
 	
-	public void insertIntoDayTable(int zip_code, Day...days){
+	public void insertIntoDayTable(int zip_code, ArrayList<Day> days){
 		weatherHelper.insertIntoDayTable(zip_code, DB_AUTHORITY, days);
 	}
 	
@@ -50,21 +50,22 @@ public class SqlHelper_2 {
 		locationHelper.deleteWeatherDataForZipCode(zip_code, DB_AUTHORITY);
 	}
 	
-	public Statement getExecutor() {
-		Statement stat;
-		Connection con;
-
+	
+	public Connection getConnection() {
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			stat = con.createStatement();
-			return stat;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			return DriverManager.getConnection(DB_AUTHORITY);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 		
 		return null;
+	}
+	
+	public void close( Connection conn ) {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
