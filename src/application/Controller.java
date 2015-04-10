@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,7 +15,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -153,10 +156,20 @@ public class Controller {
 	
 	@FXML
 	public void addTab() {
-		Tab newTab = new Tab();
-		Node node = pane.getSelectionModel().getSelectedItem().getContent();
-		newTab.setContent(node);
-		pane.getTabs().add(newTab);
+		Tab tempTab = new Tab();
+		FXMLLoader loader = new FXMLLoader();
+		try {
+			Parent root = (Parent) loader.load(this.getClass().getResource("Tab GUI.fxml").openStream());
+			tempTab.setContent(root);
+		
+			Tab newTab = new Tab();
+			newTab.setText("No Location Entered");
+			pane.getTabs().add(newTab);
+			Node node = tempTab.getContent();
+			newTab.setContent(node);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	
