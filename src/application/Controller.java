@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sql.SqlManagerImpl;
-
 import models.DayImpl;
 import interfaces.Day;
 import interfaces.SqlManager;
@@ -15,8 +14,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -43,6 +45,8 @@ public class Controller {
 	private TableColumn humidity;
 	@FXML
 	private TableColumn windSpeed;
+	@FXML
+	private TabPane pane;
 
 	private ObservableList<Day> days;
 	private SqlManager manager = new SqlManagerImpl();
@@ -55,6 +59,7 @@ public class Controller {
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
 		table.setPlaceholder(new Label("Enter a zipcode in the textarea above in order to get the weather."));
+		pane.getSelectionModel().getSelectedItem().setText("No Location Entered");
 		
 		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
 		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
@@ -75,9 +80,13 @@ public class Controller {
 			return;
 		}
 		
+		clear();
+		
 		userZip = Integer.parseInt(userInput.getText());
 		userInput.clear();
 		userInput.setPromptText("Enter zip code here.");
+		
+		pane.getSelectionModel().getSelectedItem().setText("Current Location: " + userZip);
 		
 		//Checks to see which forecast the manager should grab
 		if (numDaysToGet == 1) {
@@ -140,6 +149,14 @@ public class Controller {
 	public void clear() {
 		days.clear();
 		table.setItems(days);
+	}
+	
+	@FXML
+	public void addTab() {
+		Tab newTab = new Tab();
+		Node node = pane.getSelectionModel().getSelectedItem().getContent();
+		newTab.setContent(node);
+		pane.getTabs().add(newTab);
 	}
 
 	
