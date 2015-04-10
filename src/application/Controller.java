@@ -26,6 +26,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 
 public class Controller {
 	@FXML
@@ -50,19 +51,22 @@ public class Controller {
 	private TableColumn windSpeed;
 	@FXML
 	private TabPane pane;
+	@FXML
+	private BorderPane object;
 
 	private ObservableList<Day> days;
 	private SqlManager manager = new SqlManagerImpl();
 	private int numDaysToGet;
 	private int userZip;
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+	private int tabCount = 1;
 	
 	@FXML
 	public void initialize() {
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
 		table.setPlaceholder(new Label("Enter a zipcode in the textarea above in order to get the weather."));
-		pane.getSelectionModel().getSelectedItem().setText("No Location Entered");
+		pane.getSelectionModel().getSelectedItem().setText("Tab " + tabCount);
 		
 		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
 		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
@@ -88,8 +92,6 @@ public class Controller {
 		userZip = Integer.parseInt(userInput.getText());
 		userInput.clear();
 		userInput.setPromptText("Enter zip code here.");
-		
-		pane.getSelectionModel().getSelectedItem().setText("Current Location: " + userZip);
 		
 		//Checks to see which forecast the manager should grab
 		if (numDaysToGet == 1) {
@@ -155,18 +157,27 @@ public class Controller {
 	}
 	
 	@FXML
+	public BorderPane getBorderPane() {
+		return object;
+	}
+	
+	@FXML
 	public void addTab() {
 		Tab tempTab = new Tab();
 		FXMLLoader loader = new FXMLLoader();
 		try {
+			//Had to create a new root object and then rip out the BorderPane from it.
 			Parent root = (Parent) loader.load(this.getClass().getResource("Tab GUI.fxml").openStream());
-			tempTab.setContent(root);
+			Controller temp = loader.getController();
+			BorderPane newPane = temp.getBorderPane();
 		
+			//Create a new tab and give it the ripped BorderPane as its content.
+			//CURRENT ISSUE: You can only add a new tab if the very first one is selected. Not sure a way around this.
 			Tab newTab = new Tab();
-			newTab.setText("No Location Entered");
+			tabCount += 1;
+			newTab.setText("Tab " + tabCount);
+			newTab.setContent(newPane);
 			pane.getTabs().add(newTab);
-			Node node = tempTab.getContent();
-			newTab.setContent(node);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
