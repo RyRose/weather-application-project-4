@@ -12,16 +12,19 @@ import interfaces.Day;
 import interfaces.DatabaseManager;
 
 public class DatabaseManagerImpl implements DatabaseManager {
-	private SqlHelper helper;
+	
+	private SqlWeatherHelper weatherHelper;
+	private SqlLocationHelper locationHelper;
 	
 	public DatabaseManagerImpl() {
-		helper = new SqlHelper("weather.db");
+		 weatherHelper = new SqlWeatherHelper("weather.db");
+		 locationHelper = new SqlLocationHelper("weather.db");
 	}
 
 	@Override
 	public List<Day> getDays(int num_days, String zip_code) throws IOException {
 		refreshDatabaseForZipCode(zip_code);
-		ArrayList<Day> days = helper.getDays(zip_code);
+		ArrayList<Day> days = weatherHelper.getDays(zip_code);
 		return days.subList(0, num_days);
 	}
 
@@ -31,11 +34,11 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		
 		days = ZipcodeData.getDays(zip_code, 16);
 		
-		if ( !helper.containsLocation( new LocationImpl(zip_code, null) ) ) // If the location does not exist in database, the location is added to database
-			helper.insertLocation( new LocationImpl(zip_code, null) );
+		if ( !locationHelper.containsLocation( new LocationImpl(zip_code, null) ) ) // If the location does not exist in database, the location is added to database
+			locationHelper.insertLocation( new LocationImpl(zip_code, null) );
 		else // else, it deletes the old, out-of-date data
-			helper.deleteWeatherData(zip_code);
+			locationHelper.deleteWeatherData(zip_code);
 		
-		helper.insertDays(zip_code, days);	
+		weatherHelper.insertDays(zip_code, days);	
 	}	
 }

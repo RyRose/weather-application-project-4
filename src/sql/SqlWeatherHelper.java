@@ -18,6 +18,7 @@ public class SqlWeatherHelper extends SqlHelper_2 {
 
 	public SqlWeatherHelper(String DB_AUTHORITY) {
 		super(DB_AUTHORITY);
+		initializeTables();
 	}
 	
 	private void initializeTables() {
