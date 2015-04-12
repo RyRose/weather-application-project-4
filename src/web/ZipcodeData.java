@@ -9,8 +9,10 @@ public class ZipcodeData {
 	
 	private static web.DataAsStringGenerator generator = new web.DataAsStringGenerator();
 	
-	public static ArrayList<Day> getDays (String zipCode, int days) throws IOException{
-		String data = generator.generateStringForForecast(zipCode, Integer.toString(days));
+	public static ArrayList<Day> getDays (String zipCode, int days) throws IOException {
+		String data;
+		
+		data = generator.generateStringForForecast(zipCode, Integer.toString(days));
 		return JsonParser.parseJson(data);
 	}
 

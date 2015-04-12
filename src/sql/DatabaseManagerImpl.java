@@ -1,11 +1,7 @@
 package sql;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import models.LocationImpl;
@@ -13,7 +9,6 @@ import models.LocationImpl;
 
 import web.ZipcodeData;
 import interfaces.Day;
-import interfaces.Location;
 import interfaces.DatabaseManager;
 
 public class DatabaseManagerImpl implements DatabaseManager {
@@ -24,77 +19,23 @@ public class DatabaseManagerImpl implements DatabaseManager {
 	}
 
 	@Override
-	public List<Day> getDays(int num_days, int zip_code) {
+	public List<Day> getDays(int num_days, String zip_code) throws IOException {
 		refreshDatabaseForZipCode(zip_code);
-		
-		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);
+		ArrayList<Day> days = helper.getDays(zip_code);
 		return days.subList(0, num_days);
 	}
 
 	@Override
-	public Day getToday(int zip_code) {
-		refreshDatabaseForZipCode(zip_code);
-		
-		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);
-		return days.get(0);
-	}
-
-	@Override
-	public Day getSpecificDay(Date date, int zip_code) {
-		refreshDatabaseForZipCode(zip_code);
-		
-		ArrayList<Day> days = helper.queryDaysForZipCode(zip_code);
-		for (Day day : days) {
-			if (day.getDate().equals(date))
-				return day;
-		}
-		
-		throw new IllegalArgumentException("Date out of bounds");
-	}
-
-	@Override
-	public void refreshDatabaseForZipCode(int zip_code){
-		if (networkCheck() == false) 
-			return;
-		
+	public void refreshDatabaseForZipCode(String zip_code) throws IOException {
 		ArrayList<Day> days = null;
 		
-		for ( Location location : helper.queryAllLocations() ) {
-			if (location.getZipCode() == zip_code ) {
-				try {
-					days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				helper.deleteWeatherDataForZipCode(zip_code);
-				helper.insertIntoDayTable(zip_code,  days);
-				return;
-			}
-		}
+		days = ZipcodeData.getDays(zip_code, 16);
 		
-		helper.insertIntoLocationTable( new LocationImpl(zip_code, null) );
+		if ( !helper.containsLocation( new LocationImpl(zip_code, null) ) ) // If the location does not exist in database, the location is added to database
+			helper.insertLocation( new LocationImpl(zip_code, null) );
+		else // else, it deletes the old, out-of-date data
+			helper.deleteWeatherData(zip_code);
 		
-		try {
-			days = ZipcodeData.getDays(Integer.toString(zip_code), 16);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		helper.insertIntoDayTable(zip_code, days);
-	}
-	
-	@Override
-	public boolean networkCheck() {
-		try {
-			final URL url = new URL("http://openweathermap.org/");
-			final URLConnection conn = url.openConnection();
-			conn.connect();
-			return true;
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			return false;
-		}
-	}
-	
+		helper.insertDays(zip_code, days);	
+	}	
 }

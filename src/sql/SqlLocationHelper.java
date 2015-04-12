@@ -29,7 +29,7 @@ public class SqlLocationHelper {
 		try{
 			set = connection.createStatement().executeQuery(queryAllLocations);
 			while (set.next()) {
-				Location location = new LocationImpl(set.getInt(1), set.getString(2));
+				Location location = new LocationImpl(set.getString(1), set.getString(2));
 				locations.add(location);
 			}
 		} catch (SQLException e1) {
@@ -51,7 +51,7 @@ public class SqlLocationHelper {
 		try {
 			connection.setAutoCommit(false);
 			insertStatement = connection.prepareStatement(insertString);
-			insertStatement.setInt(1, location.getZipCode() );
+			insertStatement.setString(1, location.getZipCode() );
 			insertStatement.setString(2, location.getCityName() );
 			insertStatement.executeUpdate();
 			connection.commit();

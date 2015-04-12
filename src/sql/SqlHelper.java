@@ -12,8 +12,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import models.DayImpl;
-import models.LocationImpl;
-
 import sql.SqlContract.Weather;
 import sql.SqlContract.Area;
 
@@ -40,11 +38,11 @@ public class SqlHelper {
 		Connection connection = getConnection();
 		
 		final String CREATE_LOCATION_TABLE = "CREATE TABLE IF NOT EXISTS " + Area.TABLE_NAME +
-				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
+				"( " + SqlContract.COLUMN_ZIP 	+ " TEXT" +
 				", " + Area.COLUMN_CITY 		+ " TEXT)";
 		
 		final String CREATE_DAY_TABLE = "CREATE TABLE IF NOT EXISTS " + Weather.TABLE_NAME +
-				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
+				"( " + SqlContract.COLUMN_ZIP 	+ " TEXT NOT NULL" +
 				", " + Weather.COLUMN_DATE 		+ " BIGINT NOT NULL" +
 				", " + Weather.COLUMN_HIGH_TEMP + " REAL NOT NULL" +
 				", " + Weather.COLUMN_LOW_TEMP	+ " REAL NOT NULL" +
@@ -63,7 +61,7 @@ public class SqlHelper {
 		}
 	}
 	
-	public ArrayList<Day> queryDaysForZipCode( int zip_code ) {
+	public ArrayList<Day> getDays( String zip_code ) {
 		Connection connection = getConnection();
 		ResultSet set;
 		ArrayList<Day> days = new ArrayList<Day>();
@@ -80,8 +78,7 @@ public class SqlHelper {
 				
 		try{
 			PreparedStatement stat = connection.prepareStatement(queryJoinString);
-			stat.setInt(1, zip_code);
-			
+			stat.setString(1, zip_code);
 			set = stat.executeQuery();
 			while (set.next()) {				
 				Day day = new DayImpl( set.getLong(1), set.getDouble(4), set.getDouble(5), set.getDouble(2), set.getDouble(3));
@@ -96,31 +93,7 @@ public class SqlHelper {
 		return days;
 	}
 	
-	public ArrayList<Location> queryAllLocations() {
-		Connection connection = getConnection();
-		ResultSet set;
-		ArrayList<Location> locations = new ArrayList<Location>();
-		
-		final String queryAllLocations = 
-				"SELECT * FROM " + Area.TABLE_NAME;
-		
-		try{
-			set = connection.createStatement().executeQuery(queryAllLocations);
-			while (set.next()) {
-				Location location = new LocationImpl(set.getInt(1), set.getString(2));
-				locations.add(location);
-			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		} finally {
-			close(connection);
-		}
-		
-		return locations;
-	} 
-
-	
-	public void insertIntoDayTable(int zip_code, ArrayList<Day> days) {
+	public void insertDays(String zip_code, ArrayList<Day> days) {
 		Connection connection = getConnection();
 		PreparedStatement insertStatement;
 		
@@ -132,7 +105,7 @@ public class SqlHelper {
 			insertStatement = connection.prepareStatement(insertString);
 
 			for( Day day : days) {
-				insertStatement.setInt(1, zip_code);
+				insertStatement.setString(1, zip_code);
 				insertStatement.setLong(2, day.getDate().getTime() );
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
@@ -149,7 +122,7 @@ public class SqlHelper {
 		}
 	}
 	
-	public void insertIntoLocationTable( Location location ) {
+	public void insertLocation( Location location ) {
 		Connection connection = getConnection();
 		
 		PreparedStatement insertStatement;
@@ -160,7 +133,7 @@ public class SqlHelper {
 		try {
 			connection.setAutoCommit(false);
 			insertStatement = connection.prepareStatement(insertString);
-			insertStatement.setInt(1, location.getZipCode() );
+			insertStatement.setString(1, location.getZipCode() );
 			insertStatement.setString(2, location.getCityName() );
 			insertStatement.executeUpdate();
 			connection.commit();
@@ -172,14 +145,14 @@ public class SqlHelper {
 		}
 	}
 	
-	public boolean zipCodeInLocationTable(int zip_code) {
+	public boolean containsLocation(Location location) {
 		Connection connection = getConnection();
 		
-		final String queryZipCode = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + "?" + ")";
+		final String queryZipCode = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " = " + "?";
 		
 		try {
 			PreparedStatement stat = connection.prepareStatement(queryZipCode);
-			stat.setInt(1, zip_code);
+			stat.setString(1, location.getZipCode());
 			return stat.executeQuery().next();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -190,14 +163,32 @@ public class SqlHelper {
 		return false;
 	}
 	
-	public void deleteWeatherDataForZipCode(int zip_code) {
+	public boolean containsDay(Day day) {
+		Connection connection = getConnection();
+		
+		final String queryZipCode = " SELECT * FROM " + Weather.TABLE_NAME + " WHERE " + Weather.COLUMN_DATE  + "=" + "?";
+		
+		try {
+			PreparedStatement stat = connection.prepareStatement(queryZipCode);
+			stat.setLong(1, day.getDate().getTime());
+			return stat.executeQuery().next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(connection);
+		}
+		
+		return false;
+	}
+	
+	public void deleteWeatherData(String zip_code) {
 		Connection connection = getConnection();
 		
 		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + "?";
 		
 		try {
 			PreparedStatement stat = connection.prepareStatement(queryRemoveString);
-			stat.setInt(1, zip_code);
+			stat.setString(1, zip_code);
 			stat.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -212,7 +203,6 @@ public class SqlHelper {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
 		return null;
 	}
 	

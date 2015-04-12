@@ -18,7 +18,7 @@ public class JsonParser {
 	public JsonParser() {
 	}
 	
-	public static ArrayList<Day> parseJson( String json ) {
+	public static ArrayList<Day> parseJson( String json ) throws IOException {
 		JsonData model = null;
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -40,8 +40,12 @@ public class JsonParser {
 		public JsonDayModel[] models;
 		
 		@JsonIgnore
-		public ArrayList<Day> toDays() {
+		public ArrayList<Day> toDays() throws IOException {
 			ArrayList<Day> list = new ArrayList<Day>();
+			
+			if ( models == null ) {
+				throw new IOException();
+			}
 			for ( JsonDayModel model : models ) {
 				list.add( model.toDay() );
 			}

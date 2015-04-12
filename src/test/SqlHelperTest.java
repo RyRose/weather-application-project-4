@@ -61,7 +61,7 @@ public class SqlHelperTest {
 	
 	@Test
 	public void testLocationInsertion() {
-		helper.insertIntoLocationTable(new LocationImpl(8675309, null));
+		helper.insertLocation(new LocationImpl("8675309", null));
 		try {
 			assertTrue(getExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME).next());
 			assertFalse(getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME).next());
@@ -72,7 +72,7 @@ public class SqlHelperTest {
 	
 	@Test
 	public void testDayInsertion() { // TODO
-		helper.insertIntoDayTable(00000, getDays(100));
+		helper.insertDays("00000", getDays(100));
 	}
 	
 	@Test

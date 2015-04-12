@@ -4,20 +4,20 @@ import interfaces.Location;
 
 public class LocationImpl implements Location {
 
-	private Integer zipCode;
+	private String zipCode;
 	private String cityName;
 	
-	public LocationImpl( Integer zip_code, String city_name ) {
+	public LocationImpl( String zip_code, String city_name ) {
 		zipCode = zip_code;
 		cityName = city_name;
 	}
 	@Override
-	public Integer getZipCode() {
+	public String getZipCode() {
 		return zipCode;
 	}
 
 	@Override
-	public void setZipCode(Integer zip_code) {
+	public void setZipCode(String zip_code) {
 		zipCode = zip_code;
 	}
 

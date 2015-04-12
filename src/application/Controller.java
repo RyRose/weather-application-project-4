@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import sql.DatabaseManagerImpl;
@@ -16,8 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -38,17 +35,17 @@ public class Controller {
 
 	//Argument added to tables in initialize
 	@FXML
-	private TableColumn date;
+	private TableColumn<Day, Date> date;
 	@FXML
-	private TableColumn temp;
+	private TableColumn<Day, Double> temp;
 	@FXML
-	private TableColumn high;
+	private TableColumn<Day, Double> high;
 	@FXML
-	private TableColumn low;
+	private TableColumn<Day, Double> low;
 	@FXML
-	private TableColumn humidity;
+	private TableColumn<Day, Double> humidity;
 	@FXML
-	private TableColumn windSpeed;
+	private TableColumn<Day, Double> windSpeed;
 	@FXML
 	private TabPane pane;
 	@FXML
@@ -57,7 +54,7 @@ public class Controller {
 	private ObservableList<Day> days;
 	private DatabaseManager manager = new DatabaseManagerImpl();
 	private int numDaysToGet;
-	private int userZip;
+	private String userZip;
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private int tabCount = 1;
 	
@@ -89,18 +86,18 @@ public class Controller {
 		
 		clear();
 		
-		userZip = Integer.parseInt(userInput.getText());
-		userInput.clear();
-		userInput.setPromptText("Enter zip code here.");
+		userZip = userInput.getText();
 		
 		//Checks to see which forecast the manager should grab
-		if (numDaysToGet == 1) {
-			Day newDay = manager.getToday(userZip);
-			addToColumns(newDay);
-		} else {
-			List<Day> daylist = manager.getDays(numDaysToGet, userZip);
+		List<Day> daylist;
+		
+		try {
+			daylist = manager.getDays(numDaysToGet, userZip);
 			for (Day newDay : daylist) {addToColumns(newDay);}
+		} catch (IOException e) {
+			userInput.setText("Invalid zip code or network is down.");
 		}
+		
 	}
 	
 	public void addToColumns (Day newDay) {
@@ -130,7 +127,12 @@ public class Controller {
 		//Checks before hand if userZip is valid or not. Will have to make changes when cities are implemented
 		//Will only work if user has put in a zipcode first
 		if (String.valueOf(userZip).equals("0") || String.valueOf(userZip).length() == 0) {return;}
-		manager.refreshDatabaseForZipCode(userZip);
+		
+		try {
+			manager.refreshDatabaseForZipCode(userZip);
+		} catch (IOException e) {
+			userInput.setText("Invalid zip code or internet is down.");
+		}
 	}
 	
 	@FXML
@@ -163,11 +165,10 @@ public class Controller {
 	
 	@FXML
 	public void addTab() {
-		Tab tempTab = new Tab();
 		FXMLLoader loader = new FXMLLoader();
 		try {
 			//Had to create a new root object and then rip out the BorderPane from it.
-			Parent root = (Parent) loader.load(this.getClass().getResource("Tab GUI.fxml").openStream());
+			loader.load(this.getClass().getResource("Tab GUI.fxml").openStream());
 			Controller temp = loader.getController();
 			BorderPane newPane = temp.getBorderPane();
 		
@@ -179,7 +180,7 @@ public class Controller {
 			newTab.setContent(newPane);
 			pane.getTabs().add(newTab);
 		} catch (IOException e) {
-			e.printStackTrace();
+		 	e.printStackTrace();
 		}
 	}
 
