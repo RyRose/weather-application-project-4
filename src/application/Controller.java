@@ -81,7 +81,7 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 	}
 	
 	@FXML
-	public void add() { // TODO: Change current tab name to what userInput.getText() is
+	public void add() {
 		//Makes sure TextArea is not empty
 		if (userInput.getText().length() == 0 || userInput.getText() == null) {
 			userInput.setPromptText("Please enter a zipcode before pressing the button.");
