@@ -15,7 +15,7 @@ import sql.SqlContract.Weather;
 
 public class SqlWeatherHelper {
 	
-	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2();
+	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2("weather6-db.db");
 
 	public SqlWeatherHelper() {}
 	

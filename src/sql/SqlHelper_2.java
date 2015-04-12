@@ -9,14 +9,22 @@ import java.util.ArrayList;
 
 public class SqlHelper_2 {
 	
-	final static String DATABASE_NAME = "DB";
-	final static String DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
-	final static int VERSION = 1;
+	 String DATABASE_NAME;
+	 String DB_AUTHORITY;
+	
 	
 	private SqlWeatherHelper weatherHelper = new SqlWeatherHelper();
 	private SqlLocationHelper locationHelper = new SqlLocationHelper();
 	
-	public SqlHelper_2() {
+	public SqlHelper_2(String database_name) {
+		DATABASE_NAME = database_name;
+		DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		initializeTables();
 	}
 	
