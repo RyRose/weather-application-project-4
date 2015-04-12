@@ -9,7 +9,7 @@ import java.net.URLConnection;
 public class UrlOpener {
 	public UrlOpener(){}
 	
-	public BufferedReader openUrl(String link) throws IOException{
+	public static BufferedReader openUrl(String link) throws IOException{
 		URL urlToOpen = new URL(link);
 		URLConnection yc =  urlToOpen.openConnection();
 		BufferedReader in = new BufferedReader(new InputStreamReader(

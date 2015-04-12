@@ -3,7 +3,6 @@ package sql;
 import interfaces.Location;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,12 +14,12 @@ import sql.SqlContract.Weather;
 
 public class SqlLocationHelper {
 	
-	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2();
+	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2("weather6-db.db");
 	
 	public SqlLocationHelper(){};
 	
-	public ArrayList<Location> queryAllLocations( String DB_AUTHORITY) {
-		Connection con;
+	public ArrayList<Location> queryAllLocations( String DB_AUTHORITY ) {
+		Connection connection = sqlHelper_2.getConnection();
 		ResultSet set;
 		ArrayList<Location> locations = new ArrayList<Location>();
 		
@@ -28,64 +27,69 @@ public class SqlLocationHelper {
 				"SELECT * FROM " + Area.TABLE_NAME;
 		
 		try{
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			set = con.prepareStatement(queryAllLocations).executeQuery();
+			set = connection.createStatement().executeQuery(queryAllLocations);
 			while (set.next()) {
-				Location location = new LocationImpl(set.getInt(0), set.getString(1));
+				Location location = new LocationImpl(set.getInt(1), set.getString(2));
 				locations.add(location);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 		
 		return locations;
 	} 
 	public void insertIntoLocationTable( Location location, String DB_AUTHORITY ) {
+		Connection connection = sqlHelper_2.getConnection();
+		
 		PreparedStatement insertStatement;
-		Connection con;
 		
 		final String insertString = "INSERT INTO " + Area.TABLE_NAME + " VALUES (" +
 				"?, ?)";
 		
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			con.setAutoCommit(false);
-			insertStatement = con.prepareStatement(insertString);
+			connection.setAutoCommit(false);
+			insertStatement = connection.prepareStatement(insertString);
 			insertStatement.setInt(1, location.getZipCode() );
 			insertStatement.setString(2, location.getCityName() );
 			insertStatement.executeUpdate();
-			con.commit();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 	}
 	
 	public boolean zipCodeInLocationTable(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection		
+		Connection connection = sqlHelper_2.getConnection();
+		
 		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + zip_code + ")";
 		
 		try {
-			return sqlHelper_2.getExecutor().executeQuery(queryZip_code).next();
+			return connection.createStatement().executeQuery(queryZip_code).next();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 		
 		return false;
 	}
 	
 	public void deleteWeatherDataForZipCode(int zip_code, String DB_AUTHORITY) { // TODO: convert to PreparedStatement to prevent SQL injection
+		Connection connection = sqlHelper_2.getConnection();
+		
 		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + zip_code;
 		
 		try {
-			sqlHelper_2.getExecutor().execute(queryRemoveString);
+			connection.createStatement().execute(queryRemoveString);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 	}
 	

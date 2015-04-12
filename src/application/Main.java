@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.TabPane;
 
 
 public class Main extends Application {
@@ -12,9 +12,9 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("Application GUI.fxml"));
-			BorderPane root = (BorderPane) loader.load();
-			Scene scene = new Scene(root,600,800);
+			loader.setLocation(Main.class.getResource("Tab GUI.fxml"));
+			TabPane root = (TabPane) loader.load();
+			Scene scene = new Scene(root,600,625);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			//Setting window title

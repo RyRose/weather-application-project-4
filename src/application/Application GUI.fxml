@@ -60,13 +60,6 @@
               </columns>
             </TableView>
          </top>
-         <bottom>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-               <image>
-                  <Image url="@../../testimage.png" />
-               </image>
-            </ImageView>
-         </bottom>
       </BorderPane>
    </bottom>
 </BorderPane>

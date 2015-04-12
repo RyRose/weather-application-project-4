@@ -3,11 +3,10 @@ package sql;
 import interfaces.Day;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import models.DayImpl;
@@ -16,34 +15,39 @@ import sql.SqlContract.Weather;
 
 public class SqlWeatherHelper {
 	
-	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2();
+	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2("weather6-db.db");
 
 	public SqlWeatherHelper() {}
 	
 	public void initializeTables() {
+		Connection connection = sqlHelper_2.getConnection();
+		
 		final String CREATE_LOCATION_TABLE = "CREATE TABLE IF NOT EXISTS " + Area.TABLE_NAME +
 				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
 				", " + Area.COLUMN_CITY 		+ " TEXT)";
 		
 		final String CREATE_DAY_TABLE = "CREATE TABLE IF NOT EXISTS " + Weather.TABLE_NAME +
 				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
-				", " + Weather.COLUMN_DATE 		+ " DATE NOT NULL" +
-				", " + Weather.COLUMN_HIGH_TEMP + " INTEGER NOT NULL" +
-				", " + Weather.COLUMN_LOW_TEMP	+ " INTEGER NOT NULL" +
-				", " + Weather.COLUMN_HUMIDITY	+ " INTEGER NOT NULL" +
-				", " + Weather.COLUMN_WIND_SPEED+ " INTEGER NOT NULL" +
+				", " + Weather.COLUMN_DATE 		+ " TEXT NOT NULL" +
+				", " + Weather.COLUMN_HIGH_TEMP + " REAL NOT NULL" +
+				", " + Weather.COLUMN_LOW_TEMP	+ " REAL NOT NULL" +
+				", " + Weather.COLUMN_HUMIDITY	+ " REAL NOT NULL" +
+				", " + Weather.COLUMN_WIND_SPEED+ " REAL NOT NULL" +
 				")";
 
 		try {
-			sqlHelper_2.getExecutor().execute(CREATE_LOCATION_TABLE);
-			sqlHelper_2.getExecutor().execute(CREATE_DAY_TABLE);
+			Statement statement = connection.createStatement();
+			statement.execute(CREATE_LOCATION_TABLE);
+			statement.execute(CREATE_DAY_TABLE);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 	}
 	
 	public ArrayList<Day> queryDaysForZipCode( int zip_code, String DB_AUTHORITY ) {
-		Connection con;
+		Connection connection = sqlHelper_2.getConnection();
 		ResultSet set;
 		ArrayList<Day> days = new ArrayList<Day>();
 		
@@ -57,52 +61,51 @@ public class SqlWeatherHelper {
 				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = " + zip_code +
 				" AND " 	+ Area.TABLE_NAME	 + "." + SqlContract.COLUMN_ZIP		+ " = " + Weather.TABLE_NAME + "." + SqlContract.COLUMN_ZIP;
 				
-		
 		try{
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			set = con.prepareStatement(queryJoinString).executeQuery();
-			
+			set = connection.createStatement().executeQuery(queryJoinString);
 			while (set.next()) {
-				Day day = new DayImpl( set.getLong(1), set.getDouble(1), set.getDouble(2), set.getDouble(3), set.getDouble(4));
+				
+				 System.out.println("Querying db -> date: " + set.getString(1) + "| high: " +
+						set.getDouble(2) + "| low: " + set.getDouble(3) + "| humidity: " + set.getDouble(4) + "| wind: " + set.getDouble(5));
+				
+				Day day = new DayImpl( set.getLong(1), set.getDouble(4), set.getDouble(5), set.getDouble(2), set.getDouble(3));
 				days.add(day);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 		
 		return days;
 	}
 	
-	public void insertIntoDayTable(int zip_code, String DB_AUTHORITY, Day... days) {
+	public void insertIntoDayTable(int zip_code, String DB_AUTHORITY, ArrayList<Day> days) {
+		Connection connection = sqlHelper_2.getConnection();
 		PreparedStatement insertStatement;
-		Connection con;
 		
 		final String insertString = "INSERT INTO " + Weather.TABLE_NAME + " VALUES (" +
 		        "?, ?, ?, ?, ?, ?)";
 
 		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(DB_AUTHORITY);
-			con.setAutoCommit(false);
-			insertStatement = con.prepareStatement(insertString);
+			connection.setAutoCommit(false);
+			insertStatement = connection.prepareStatement(insertString);
 
 			for( Day day : days) {
 				insertStatement.setInt(1, zip_code);
-				insertStatement.setDate(2, (Date) day.getDate());
+				insertStatement.setLong(2, day.getDate().getTime() );
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
-				insertStatement.setDouble(5, day.getSpeed());
-				insertStatement.setDouble(6, day.getHumidity());
+				insertStatement.setDouble(5, day.getHumidity());
+				insertStatement.setDouble(6, day.getSpeed());
 				insertStatement.executeUpdate();
 			}
-			con.commit();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
+		} finally {
+			sqlHelper_2.close(connection);
 		}
 	}
 	

@@ -33,7 +33,6 @@ public class SqlHelperTest {
 	
 	@Before
 	public void Before() throws ClassNotFoundException {
-		System.out.println("Before");
 		Class.forName("org.sqlite.JDBC");
 		helper = new SqlHelper(DATABASE_NAME);
 		connection = getConnection();

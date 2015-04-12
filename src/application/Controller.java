@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -7,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sql.DatabaseManagerImpl;
-
 import models.DayImpl;
 import interfaces.Day;
 import interfaces.DatabaseManager;
@@ -15,12 +15,18 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 
 public class Controller {
 	@FXML
@@ -43,18 +49,24 @@ public class Controller {
 	private TableColumn humidity;
 	@FXML
 	private TableColumn windSpeed;
+	@FXML
+	private TabPane pane;
+	@FXML
+	private BorderPane object;
 
 	private ObservableList<Day> days;
 	private DatabaseManager manager = new DatabaseManagerImpl();
 	private int numDaysToGet;
 	private int userZip;
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+	private int tabCount = 1;
 	
 	@FXML
 	public void initialize() {
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
 		table.setPlaceholder(new Label("Enter a zipcode in the textarea above in order to get the weather."));
+		pane.getSelectionModel().getSelectedItem().setText("Tab " + tabCount);
 		
 		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
 		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
@@ -74,6 +86,8 @@ public class Controller {
 			userInput.setPromptText("Please enter a zipcode before pressing the button.");
 			return;
 		}
+		
+		clear();
 		
 		userZip = Integer.parseInt(userInput.getText());
 		userInput.clear();
@@ -140,6 +154,33 @@ public class Controller {
 	public void clear() {
 		days.clear();
 		table.setItems(days);
+	}
+	
+	@FXML
+	public BorderPane getBorderPane() {
+		return object;
+	}
+	
+	@FXML
+	public void addTab() {
+		Tab tempTab = new Tab();
+		FXMLLoader loader = new FXMLLoader();
+		try {
+			//Had to create a new root object and then rip out the BorderPane from it.
+			Parent root = (Parent) loader.load(this.getClass().getResource("Tab GUI.fxml").openStream());
+			Controller temp = loader.getController();
+			BorderPane newPane = temp.getBorderPane();
+		
+			//Create a new tab and give it the ripped BorderPane as its content.
+			//CURRENT ISSUE: You can only add a new tab if the very first one is selected. Not sure a way around this.
+			Tab newTab = new Tab();
+			tabCount += 1;
+			newTab.setText("Tab " + tabCount);
+			newTab.setContent(newPane);
+			pane.getTabs().add(newTab);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	
