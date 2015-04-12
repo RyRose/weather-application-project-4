@@ -61,21 +61,22 @@ public class SqlHelperTest {
 	}
 	
 	@Test
-	public void testLocationInsertion() {
-		helper.insertLocation(new LocationImpl("8675309", null));
-		try {
-			assertTrue(getExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME).next());
-			assertFalse(getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME).next());
-		} catch (SQLException e) {
-			throw new RuntimeException();
-		}
+	public void testLocationInsertion() throws SQLException {
+		Location location = getLocations(1).get(0);
+		helper.insertLocation(location);
+		
+		ResultSet rs = getExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME);
+		
+		rs.next();
+		
+		assertTrue(location.equals(convertToLocation(rs)));
 	}
 	
 	@Test
 	public void testDayInsertion() throws SQLException { // TODO
 		ArrayList<Day> days = getDays(TEST_NUM);
 		
-		helper.insertDays("72032", days);
+		helper.insertDays( getLocations(1).get(0) , days);
 		
 		ResultSet set = getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME);
 		
@@ -107,20 +108,30 @@ public class SqlHelperTest {
 		for( Day day : days )
 			assertFalse(helper.containsDay(day));
 		
-		helper.insertDays("12345", days);
+		helper.insertDays( getLocations(1).get(0) , days);
 		
 		for (Day day : days )
 			assertTrue(helper.containsDay(day));
 	}
 	
 	@Test
-	public void testDeleteWeather() { // TODO
+	public void testDeleteWeather() throws SQLException { // TODO
+		Location location = getLocations(1).get(0);
+		ArrayList<Day> days = getDays(TEST_NUM);
 		
-	}
-	
-	@Test
-	public void testQueryingLocations() { // TODO
+		helper.insertLocation(location);
 		
+		helper.insertDays(location, days);
+		
+		for( Day day : days) {
+			assertTrue(helper.containsDay(day));
+		}
+		
+		helper.deleteWeatherData(location);
+		
+		for ( Day day : days ) {
+			assertFalse( helper.containsDay(day) );
+		}
 	}
 
 	private Day convertToDay( ResultSet set ) throws SQLException {
@@ -131,6 +142,14 @@ public class SqlHelperTest {
 		day.setMin(set.getDouble(Weather.COLUMN_LOW_TEMP));
 		day.setSpeed(set.getDouble(Weather.COLUMN_WIND_SPEED));
 		return day;
+	}
+	
+	private Location convertToLocation( ResultSet set ) throws SQLException {
+		Location location = new LocationImpl();
+		location.setZipCode(set.getString(SqlContract.COLUMN_ZIP));
+		location.setCityName(set.getString(Area.COLUMN_CITY));
+		
+		return location;
 	}
 	
 	private ArrayList<Location> getLocations( int num_locations ) {

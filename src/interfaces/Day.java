@@ -1,10 +1,12 @@
 package interfaces;
 
+import java.util.Date;
+
 public interface Day {
 	
 	public double getCurrent();
 	
-	public java.util.Date getDate();
+	public Date getDate();
 	public void setDate(long l);  //time in unix format
 	
 	public double getMin();

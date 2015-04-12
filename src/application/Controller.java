@@ -27,7 +27,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 
-public class Controller {
+public class Controller { // TODO: Set up when pressing enter in userInput to instead press the get Forecast button
 	@FXML
 	private Button add;
 	@FXML
@@ -132,7 +132,7 @@ public class Controller {
 		if (String.valueOf(userZip).equals("0") || String.valueOf(userZip).length() == 0) {return;}
 		
 		try {
-			manager.refreshDatabaseForZipCode(userZip);
+			manager.refreshDatabase(userZip);
 		} catch (IOException e) {
 			userInput.setText("Invalid zip code or internet is down.");
 		}

@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.LocationImpl;
-
-
 import web.ZipcodeData;
 import interfaces.Day;
 import interfaces.DatabaseManager;
+import interfaces.Location;
 
 public class DatabaseManagerImpl implements DatabaseManager {
 	private SqlHelper helper;
@@ -20,22 +19,23 @@ public class DatabaseManagerImpl implements DatabaseManager {
 
 	@Override
 	public List<Day> getDays(int num_days, String zip_code) throws IOException {
-		refreshDatabaseForZipCode(zip_code);
-		ArrayList<Day> days = helper.getDays(zip_code);
+		refreshDatabase(zip_code);
+		ArrayList<Day> days = helper.getDays( new LocationImpl(zip_code, null) );
 		return days.subList(0, num_days);
 	}
 
 	@Override
-	public void refreshDatabaseForZipCode(String zip_code) throws IOException {
+	public void refreshDatabase(String zip_code) throws IOException {
 		ArrayList<Day> days = null;
+		Location location = new LocationImpl(zip_code, null);
 		
 		days = ZipcodeData.getDays(zip_code, 16);
 		
-		if ( !helper.containsLocation( new LocationImpl(zip_code, null) ) ) // If the location does not exist in database, the location is added to database
-			helper.insertLocation( new LocationImpl(zip_code, null) );
+		if ( !helper.containsLocation( location ) ) // If the location does not exist in database, the location is added to database
+			helper.insertLocation( location );
 		else // else, it deletes the old, out-of-date data
-			helper.deleteWeatherData(zip_code);
+			helper.deleteWeatherData(location);
 		
-		helper.insertDays(zip_code, days);	
+		helper.insertDays(location, days);	
 	}	
 }
