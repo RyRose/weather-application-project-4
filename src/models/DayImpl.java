@@ -22,6 +22,7 @@ public class DayImpl implements Day {
 		this.high_temp = high_temp;
 		this.low_temp = low_temp;
 		this.current_temp = (low_temp + high_temp)/2;
+
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class DayImpl implements Day {
 	@Override
 	public double getMax() {return high_temp;}
 	@Override
-	public double getCurrent() {return current_temp;}
+	public double getCurrent() {return Math.round(current_temp*10)/10;}
 	@Override
 	public double getSpeed() {return wind_speed;}
 }

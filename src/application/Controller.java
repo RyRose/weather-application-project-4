@@ -22,7 +22,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 
 public class Controller {
@@ -64,6 +66,7 @@ public class Controller {
 		numDaysToGet = 1;
 		table.setPlaceholder(new Label("Enter a zipcode in the textarea above in order to get the weather."));
 		pane.getSelectionModel().getSelectedItem().setText("Tab " + tabCount);
+		
 		
 		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
 		date.setCellValueFactory(new PropertyValueFactory<Day, Date>("date"));
@@ -108,22 +111,22 @@ public class Controller {
 	//The next three methods are based off of the three APIs that we can pull from:
 	//current, five day, and sixteen day forecast. No other options available at this time
 	@FXML
-	public void SixteenDayForecast() {
+	private void SixteenDayForecast() {
 		numDaysToGet = 16;
 	}
 	
 	@FXML
-	public void FiveDayForecast() {
+	private void FiveDayForecast() {
 		numDaysToGet = 5;
 	}
 	
 	@FXML
-	public void TodaysForecast() {
+	private void TodaysForecast() {
 		numDaysToGet = 1;
 	}
 	
 	@FXML
-	public void refreshLocation() {
+	private void refreshLocation() {
 		//Checks before hand if userZip is valid or not. Will have to make changes when cities are implemented
 		//Will only work if user has put in a zipcode first
 		if (String.valueOf(userZip).equals("0") || String.valueOf(userZip).length() == 0) {return;}
@@ -141,7 +144,7 @@ public class Controller {
 	}
 	
 	@FXML
-	public void testAdding() {
+	private void testAdding() {
 		//Creates sql.Date object based off of util.Date object
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
@@ -153,15 +156,16 @@ public class Controller {
 	}
 	
 	@FXML
-	public void clear() {
+	private void clear() {
 		days.clear();
 		table.setItems(days);
 	}
 	
 	@FXML
-	public BorderPane getBorderPane() {
+	private BorderPane getBorderPane() {
 		return object;
 	}
+	
 	
 	@FXML
 	public void addTab() {
