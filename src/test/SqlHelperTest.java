@@ -27,7 +27,7 @@ public class SqlHelperTest {
 	
 	private final String DATABASE_NAME = "test.db";
 	private final String DATABASE_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
-	private int TEST_NUM = 25;
+	private int TEST_NUM = 5;
 	
 	SqlHelper helper;
 	Connection connection;
