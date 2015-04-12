@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import sql.DatabaseManagerImpl;
@@ -65,7 +66,7 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		days = FXCollections.observableArrayList();	
 		numDaysToGet = 1;
 		table.setPlaceholder(new Label("Enter a zipcode in the textarea above in order to get the weather."));
-		pane.getSelectionModel().getSelectedItem().setText("Tab " + tabCount);
+		pane.getSelectionModel().getSelectedItem().setText("Location " + tabCount);
 		
 		
 		//Names for the PropertyValueFactory are based on the Day class, so fix this if you make changes to it
@@ -144,18 +145,6 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 	}
 	
 	@FXML
-	private void testAdding() { // TODO: Remove the testing option
-		//Creates sql.Date object based off of util.Date object
-		java.util.Date utilDate = new java.util.Date();
-		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-		
-		//Info based on DC weather at 12:44 on 4/6/15
-		Day newDay = new DayImpl(sqlDate.getTime(), 40.0, 5.56, 21.9, 16.3);
-		
-		addToColumns(newDay);
-	}
-	
-	@FXML
 	private void clear() {
 		days.clear();
 		table.setItems(days);
@@ -180,7 +169,7 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 			//CURRENT ISSUE: You can only add a new tab if the very first one is selected. Not sure a way around this.
 			Tab newTab = new Tab();
 			tabCount += 1;
-			newTab.setText("Tab " + tabCount);
+			newTab.setText("Location " + tabCount);
 			newTab.setContent(newPane);
 			pane.getTabs().add(newTab);
 		} catch (IOException e) {
