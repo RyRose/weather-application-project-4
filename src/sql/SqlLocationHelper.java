@@ -12,36 +12,16 @@ import models.LocationImpl;
 import sql.SqlContract.Area;
 import sql.SqlContract.Weather;
 
-public class SqlLocationHelper {
+public class SqlLocationHelper extends SqlHelper_2 {
 	
-	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2("weather6-db.db");
 	
-	public SqlLocationHelper(){};
 	
-	public ArrayList<Location> queryAllLocations( String DB_AUTHORITY ) {
-		Connection connection = sqlHelper_2.getConnection();
-		ResultSet set;
-		ArrayList<Location> locations = new ArrayList<Location>();
-		
-		final String queryAllLocations = 
-				"SELECT * FROM " + Area.TABLE_NAME;
-		
-		try{
-			set = connection.createStatement().executeQuery(queryAllLocations);
-			while (set.next()) {
-				Location location = new LocationImpl(set.getString(1), set.getString(2));
-				locations.add(location);
-			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		} finally {
-			sqlHelper_2.close(connection);
-		}
-		
-		return locations;
-	} 
-	public void insertIntoLocationTable( Location location, String DB_AUTHORITY ) {
-		Connection connection = sqlHelper_2.getConnection();
+	public SqlLocationHelper(String DB_AUTHORITY){
+		super(DB_AUTHORITY);
+	};
+	
+	public void insertLocation( Location location ) {
+		Connection connection = getConnection();
 		
 		PreparedStatement insertStatement;
 		
@@ -59,37 +39,41 @@ public class SqlLocationHelper {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		} finally {
-			sqlHelper_2.close(connection);
+			close(connection);
 		}
 	}
 	
-	public boolean zipCodeInLocationTable(int zip_code) { // TODO: convert to PreparedStatement to prevent SQL injection		
-		Connection connection = sqlHelper_2.getConnection();
+	public boolean containsLocation(Location location) {
+		Connection connection = getConnection();
 		
-		final String queryZip_code = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " IN (" + zip_code + ")";
+		final String queryZipCode = " SELECT * FROM " + Area.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP  + " = " + "?";
 		
 		try {
-			return connection.createStatement().executeQuery(queryZip_code).next();
+			PreparedStatement stat = connection.prepareStatement(queryZipCode);
+			stat.setString(1, location.getZipCode());
+			return stat.executeQuery().next();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			sqlHelper_2.close(connection);
+			close(connection);
 		}
 		
 		return false;
 	}
 	
-	public void deleteWeatherDataForZipCode(int zip_code, String DB_AUTHORITY) { // TODO: convert to PreparedStatement to prevent SQL injection
-		Connection connection = sqlHelper_2.getConnection();
+	public void deleteWeatherData(String zip_code) {
+		Connection connection = getConnection();
 		
-		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + zip_code;
+		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + "?";
 		
 		try {
-			connection.createStatement().execute(queryRemoveString);
+			PreparedStatement stat = connection.prepareStatement(queryRemoveString);
+			stat.setString(1, zip_code);
+			stat.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			sqlHelper_2.close(connection);
+			close(connection);
 		}
 	}
 	

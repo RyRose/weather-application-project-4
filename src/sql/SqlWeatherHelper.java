@@ -13,22 +13,23 @@ import models.DayImpl;
 import sql.SqlContract.Area;
 import sql.SqlContract.Weather;
 
-public class SqlWeatherHelper {
+public class SqlWeatherHelper extends SqlHelper_2 {
 	
-	private SqlHelper_2 sqlHelper_2 = new SqlHelper_2("weather6-db.db");
 
-	public SqlWeatherHelper() {}
+	public SqlWeatherHelper(String DB_AUTHORITY) {
+		super(DB_AUTHORITY);
+	}
 	
-	public void initializeTables() {
-		Connection connection = sqlHelper_2.getConnection();
+	private void initializeTables() {
+		Connection connection = getConnection();
 		
 		final String CREATE_LOCATION_TABLE = "CREATE TABLE IF NOT EXISTS " + Area.TABLE_NAME +
-				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER" +
+				"( " + SqlContract.COLUMN_ZIP 	+ " TEXT" +
 				", " + Area.COLUMN_CITY 		+ " TEXT)";
 		
 		final String CREATE_DAY_TABLE = "CREATE TABLE IF NOT EXISTS " + Weather.TABLE_NAME +
-				"( " + SqlContract.COLUMN_ZIP 	+ " INTEGER NOT NULL" +
-				", " + Weather.COLUMN_DATE 		+ " TEXT NOT NULL" +
+				"( " + SqlContract.COLUMN_ZIP 	+ " TEXT NOT NULL" +
+				", " + Weather.COLUMN_DATE 		+ " BIGINT NOT NULL" +
 				", " + Weather.COLUMN_HIGH_TEMP + " REAL NOT NULL" +
 				", " + Weather.COLUMN_LOW_TEMP	+ " REAL NOT NULL" +
 				", " + Weather.COLUMN_HUMIDITY	+ " REAL NOT NULL" +
@@ -42,12 +43,12 @@ public class SqlWeatherHelper {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			sqlHelper_2.close(connection);
+			close(connection);
 		}
 	}
 	
-	public ArrayList<Day> queryDaysForZipCode( int zip_code, String DB_AUTHORITY ) {
-		Connection connection = sqlHelper_2.getConnection();
+	public ArrayList<Day> getDays( String zip_code ) {
+		Connection connection = getConnection();
 		ResultSet set;
 		ArrayList<Day> days = new ArrayList<Day>();
 		
@@ -58,30 +59,28 @@ public class SqlWeatherHelper {
 				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_HUMIDITY 	+ 
 				", "		+ Weather.TABLE_NAME + "." + Weather.COLUMN_WIND_SPEED	+
 				" FROM " 	+ Weather.TABLE_NAME + ", "+ Area.TABLE_NAME 			+
-				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = " + zip_code +
+				" WHERE " 	+ Area.TABLE_NAME 	 + "." + SqlContract.COLUMN_ZIP 	+ " = " + "?" +
 				" AND " 	+ Area.TABLE_NAME	 + "." + SqlContract.COLUMN_ZIP		+ " = " + Weather.TABLE_NAME + "." + SqlContract.COLUMN_ZIP;
 				
 		try{
-			set = connection.createStatement().executeQuery(queryJoinString);
-			while (set.next()) {
-				
-				 System.out.println("Querying db -> date: " + set.getString(1) + "| high: " +
-						set.getDouble(2) + "| low: " + set.getDouble(3) + "| humidity: " + set.getDouble(4) + "| wind: " + set.getDouble(5));
-				
+			PreparedStatement stat = connection.prepareStatement(queryJoinString);
+			stat.setString(1, zip_code);
+			set = stat.executeQuery();
+			while (set.next()) {				
 				Day day = new DayImpl( set.getLong(1), set.getDouble(4), set.getDouble(5), set.getDouble(2), set.getDouble(3));
 				days.add(day);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		} finally {
-			sqlHelper_2.close(connection);
+			close(connection);
 		}
 		
 		return days;
 	}
 	
-	public void insertIntoDayTable(int zip_code, String DB_AUTHORITY, ArrayList<Day> days) {
-		Connection connection = sqlHelper_2.getConnection();
+	public void insertDays(String zip_code, ArrayList<Day> days) {
+		Connection connection = getConnection();
 		PreparedStatement insertStatement;
 		
 		final String insertString = "INSERT INTO " + Weather.TABLE_NAME + " VALUES (" +
@@ -92,7 +91,7 @@ public class SqlWeatherHelper {
 			insertStatement = connection.prepareStatement(insertString);
 
 			for( Day day : days) {
-				insertStatement.setInt(1, zip_code);
+				insertStatement.setString(1, zip_code);
 				insertStatement.setLong(2, day.getDate().getTime() );
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
@@ -105,11 +104,26 @@ public class SqlWeatherHelper {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		} finally {
-			sqlHelper_2.close(connection);
+			close(connection);
 		}
 	}
 	
+	public boolean containsDay(Day day) {
+		Connection connection = getConnection();
+		
+		final String queryZipCode = " SELECT * FROM " + Weather.TABLE_NAME + " WHERE " + Weather.COLUMN_DATE  + "=" + "?";
+		
+		try {
+			PreparedStatement stat = connection.prepareStatement(queryZipCode);
+			stat.setLong(1, day.getDate().getTime());
+			return stat.executeQuery().next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(connection);
+		}
+		
+		return false;
+	}
+	}
 	
-	
-	
-}
