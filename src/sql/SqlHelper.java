@@ -61,7 +61,7 @@ public class SqlHelper {
 		}
 	}
 	
-	public ArrayList<Day> getDays( String zip_code ) {
+	public ArrayList<Day> getDays( Location location ) {
 		Connection connection = getConnection();
 		ResultSet set;
 		ArrayList<Day> days = new ArrayList<Day>();
@@ -78,14 +78,19 @@ public class SqlHelper {
 				
 		try{
 			PreparedStatement stat = connection.prepareStatement(queryJoinString);
-			stat.setString(1, zip_code);
+			stat.setString(1, location.getZipCode());
 			set = stat.executeQuery();
 			while (set.next()) {				
-				Day day = new DayImpl( set.getLong(1), set.getDouble(4), set.getDouble(5), set.getDouble(2), set.getDouble(3));
+				Day day = new DayImpl();
+				day.setDate(set.getLong(Weather.COLUMN_DATE) );
+				day.setMax( set.getDouble(Weather.COLUMN_HIGH_TEMP) );
+				day.setMin( set.getDouble(Weather.COLUMN_LOW_TEMP) );
+				day.setHumidity( set.getDouble(Weather.COLUMN_HUMIDITY) );
+				day.setSpeed( set.getDouble(Weather.COLUMN_WIND_SPEED) );
 				days.add(day);
 			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			close(connection);
 		}
@@ -93,7 +98,7 @@ public class SqlHelper {
 		return days;
 	}
 	
-	public void insertDays(String zip_code, ArrayList<Day> days) {
+	public void insertDays(Location location, ArrayList<Day> days) {
 		Connection connection = getConnection();
 		PreparedStatement insertStatement;
 		
@@ -105,7 +110,7 @@ public class SqlHelper {
 			insertStatement = connection.prepareStatement(insertString);
 
 			for( Day day : days) {
-				insertStatement.setString(1, zip_code);
+				insertStatement.setString(1, location.getZipCode());
 				insertStatement.setLong(2, day.getDate().getTime() );
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
@@ -115,8 +120,8 @@ public class SqlHelper {
 			}
 			connection.commit();
 			connection.setAutoCommit(true);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			close(connection);
 		}
@@ -138,8 +143,8 @@ public class SqlHelper {
 			insertStatement.executeUpdate();
 			connection.commit();
 			connection.setAutoCommit(true);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			close(connection);
 		}
@@ -181,14 +186,14 @@ public class SqlHelper {
 		return false;
 	}
 	
-	public void deleteWeatherData(String zip_code) {
+	public void deleteWeatherData(Location location) {
 		Connection connection = getConnection();
 		
 		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + "?";
 		
 		try {
 			PreparedStatement stat = connection.prepareStatement(queryRemoveString);
-			stat.setString(1, zip_code);
+			stat.setString(1, location.getZipCode());
 			stat.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();

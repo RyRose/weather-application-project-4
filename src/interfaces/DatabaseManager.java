@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface DatabaseManager {
 
-	public void refreshDatabaseForZipCode(String zip_code) throws IOException;
+	public void refreshDatabase(String zip_code) throws IOException;
 	public List<Day> getDays(int num_days, String zip_code) throws IOException;
 }

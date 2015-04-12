@@ -25,6 +25,11 @@ public class DayImpl implements Day {
 	}
 	
 	@Override
+	public int hashCode() {
+		return (int) (date + humidity + wind_speed + high_temp + low_temp);
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		if ( obj instanceof DayImpl ) {
 			DayImpl other = (DayImpl) obj;

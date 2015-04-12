@@ -7,10 +7,30 @@ public class LocationImpl implements Location {
 	private String zipCode;
 	private String cityName;
 	
+	public LocationImpl() {}
+	
 	public LocationImpl( String zip_code, String city_name ) {
 		zipCode = zip_code;
 		cityName = city_name;
 	}
+	
+	@Override
+	public int hashCode() {
+		return zipCode.hashCode() + cityName.hashCode();
+	}
+	
+	@Override
+	public boolean equals( Object obj ) {
+		if ( obj instanceof LocationImpl ) {
+			LocationImpl other = (LocationImpl) obj;
+			return other.zipCode.equals(zipCode) &&
+					other.cityName.equals(cityName);
+					
+		} else {
+			return false;
+		}
+	}
+	
 	@Override
 	public String getZipCode() {
 		return zipCode;
