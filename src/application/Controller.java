@@ -29,7 +29,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 
-public class Controller { // TODO: Set up when pressing enter in userInput to instead press the get Forecast button
+public class Controller {
 	@FXML
 	private Button add;
 	@FXML
@@ -80,7 +80,7 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		
 		table.setItems(days);
 		
-		//keylistener for user pressing enter key
+		//Keylistener for user pressing enter key
 		userInput.setOnKeyPressed(event -> {
 			KeyCode key = event.getCode();
 			if (key == KeyCode.ENTER) {add();}
@@ -106,6 +106,7 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		//Checks to see which forecast the manager should grab
 		List<Day> daylist;
 		
+		//Adds all the returned days to the days list and checks if network is down
 		try {
 			daylist = manager.getDays(numDaysToGet, userZip);
 			for (Day newDay : daylist) {addToColumns(newDay);}
@@ -115,6 +116,7 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		
 	}
 	
+	//Adds a day to the days list so that it is visible on the table
 	public void addToColumns (Day newDay) {
 		days.add(newDay);
 	}
@@ -150,17 +152,20 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		}
 	}
 	
+	//Ends application
 	@FXML
 	public void endApplication(){
 		Platform.exit();
 	}
 	
+	//Removes all data from the table
 	@FXML
 	private void clear() {
 		days.clear();
 		table.setItems(days);
 	}
 	
+	//Method created to grab the borderpane out of an fxmlloader
 	@FXML
 	private BorderPane getBorderPane() {
 		return object;
