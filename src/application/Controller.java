@@ -26,6 +26,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 
 public class Controller { // TODO: Set up when pressing enter in userInput to instead press the get Forecast button
@@ -78,10 +79,18 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		windSpeed.setCellValueFactory(new PropertyValueFactory<Day, Double>("speed"));
 		
 		table.setItems(days);
+		
+		//keylistener for user pressing enter key
+		userInput.setOnKeyPressed(event -> {
+			KeyCode key = event.getCode();
+			if (key == KeyCode.ENTER) {add();}
+			//Prevents newlines from appearing in textarea
+			event.consume();
+		});
 	}
 	
 	@FXML
-	public void add() { // TODO: Change current tab name to what userInput.getText() is
+	public void add() {
 		//Makes sure TextArea is not empty
 		if (userInput.getText().length() == 0 || userInput.getText() == null) {
 			userInput.setPromptText("Please enter a zipcode before pressing the button.");
@@ -91,6 +100,8 @@ public class Controller { // TODO: Set up when pressing enter in userInput to in
 		clear();
 		
 		userZip = userInput.getText();
+		
+		userInput.clear();
 		
 		//Checks to see which forecast the manager should grab
 		List<Day> daylist;
