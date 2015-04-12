@@ -28,7 +28,7 @@ public class DataAsStringGenerator {
 	}
 	
 	String openLink(String link) throws IOException{
-		BufferedReader data = opener.openUrl(link);
+		BufferedReader data = UrlOpener.openUrl(link);
 		String line;
 		while((line = data.readLine()) != null){
 		    json = line;
