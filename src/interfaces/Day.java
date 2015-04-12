@@ -3,10 +3,9 @@ package interfaces;
 public interface Day {
 	
 	public double getCurrent();
-	public void setCurrent(double current_temp); //current temp
 	
 	public java.util.Date getDate();
-	public void setDate(int date);  //time in unix format
+	public void setDate(long l);  //time in unix format
 	
 	public double getMin();
 	public void setMin(double low_temp);  //lowest temperature

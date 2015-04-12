@@ -1,12 +1,12 @@
 package test;
 
 import static org.junit.Assert.*;
-
-
 import interfaces.Day;
+import interfaces.Location;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ public class SqlHelperTest {
 	
 	private final String DATABASE_NAME = "test.db";
 	private final String DATABASE_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
+	private int TEST_NUM = 25;
 	
 	SqlHelper helper;
 	Connection connection;
@@ -71,13 +72,45 @@ public class SqlHelperTest {
 	}
 	
 	@Test
-	public void testDayInsertion() { // TODO
-		helper.insertDays("00000", getDays(100));
+	public void testDayInsertion() throws SQLException { // TODO
+		ArrayList<Day> days = getDays(TEST_NUM);
+		
+		helper.insertDays("72032", days);
+		
+		ResultSet set = getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME);
+		
+		int i = 0;
+		
+		for(; set.next(); i++) {
+			Day day = convertToDay(set);
+			assertTrue(days.get(i).equals(day));
+		}
+		
+		assertEquals(i, TEST_NUM);
 	}
 	
 	@Test
-	public void testZipCodeInTable() { // TODO
+	public void testLocationInDatabase() {
+		ArrayList<Location> locations = getLocations(TEST_NUM);
 		
+		for( Location location : locations ) {
+			assertFalse(helper.containsLocation(location));
+			helper.insertLocation(location);
+			assertTrue(helper.containsLocation(location));
+		}
+	}
+	
+	@Test
+	public void testDayInDatabase() { // TODO
+		ArrayList<Day> days = getDays(TEST_NUM);
+		
+		for( Day day : days )
+			assertFalse(helper.containsDay(day));
+		
+		helper.insertDays("12345", days);
+		
+		for (Day day : days )
+			assertTrue(helper.containsDay(day));
 	}
 	
 	@Test
@@ -89,17 +122,31 @@ public class SqlHelperTest {
 	public void testQueryingLocations() { // TODO
 		
 	}
+
+	private Day convertToDay( ResultSet set ) throws SQLException {
+		Day day = new DayImpl();
+		day.setDate(set.getLong(Weather.COLUMN_DATE));
+		day.setHumidity(set.getDouble(Weather.COLUMN_HUMIDITY));
+		day.setMax(set.getDouble(Weather.COLUMN_HIGH_TEMP));
+		day.setMin(set.getDouble(Weather.COLUMN_LOW_TEMP));
+		day.setSpeed(set.getDouble(Weather.COLUMN_WIND_SPEED));
+		return day;
+	}
 	
-	@Test
-	public void testQueryingDays() { // TODO
+	private ArrayList<Location> getLocations( int num_locations ) {
+		ArrayList<Location> list = new ArrayList<>();
 		
+		for (int i = 0; i < num_locations; i++)
+			list.add( new LocationImpl(String.valueOf(i), String.valueOf(i + 1)) );
+		
+		return list;
 	}
 	
 	private ArrayList<Day> getDays( int num_days ) {
 		ArrayList<Day> list = new ArrayList<Day>();
 		
 		for (int i = 0; i < num_days; i++)
-			list.add( new DayImpl() );
+			list.add( new DayImpl(Long.valueOf(i), i+1, i+2, i+3, i+4) );
 		
 		return list;
 	}

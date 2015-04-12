@@ -80,7 +80,7 @@ public class Controller {
 	}
 	
 	@FXML
-	public void add() {
+	public void add() { // TODO: Change current tab name to what userInput.getText() is
 		//Makes sure TextArea is not empty
 		if (userInput.getText().length() == 0 || userInput.getText() == null) {
 			userInput.setPromptText("Please enter a zipcode before pressing the button.");
@@ -144,7 +144,7 @@ public class Controller {
 	}
 	
 	@FXML
-	private void testAdding() {
+	private void testAdding() { // TODO: Remove the testing option
 		//Creates sql.Date object based off of util.Date object
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
@@ -168,7 +168,7 @@ public class Controller {
 	
 	
 	@FXML
-	public void addTab() {
+	public void addTab() { 
 		FXMLLoader loader = new FXMLLoader();
 		try {
 			//Had to create a new root object and then rip out the BorderPane from it.

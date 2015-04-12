@@ -3,7 +3,7 @@ package sql;
 public class SqlContract {
 	
 	public static final String COLUMN_ZIP = "zipcode";
-
+	
 	public static class Area {
 		public static final String TABLE_NAME = "area";
 		public static final String COLUMN_CITY = "cityname";
