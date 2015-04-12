@@ -21,7 +21,8 @@ public class DayImpl implements Day {
 		this.wind_speed = wind_speed;
 		this.high_temp = high_temp;
 		this.low_temp = low_temp;
-		this.current_temp = (low_temp + high_temp)/2;
+		this.current_temp = (Math.round(((low_temp + high_temp)/2)*100))/100; 
+		//rounded to two decimals
 	}
 
 	@Override
