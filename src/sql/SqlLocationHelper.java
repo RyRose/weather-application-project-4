@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import sql.SqlContract.Area;
 import sql.SqlContract.Weather;
 
-public class SqlLocationHelper extends SqlHelper_2 {
+public class SqlLocationHelper extends BaseSqlHelper {
 	
 	
 	
@@ -57,14 +57,14 @@ public class SqlLocationHelper extends SqlHelper_2 {
 		return false;
 	}
 	
-	public void deleteWeatherData(String zip_code) {
+	public void deleteWeatherData(Location location) {
 		Connection connection = getConnection();
 		
 		final String queryRemoveString = "DELETE FROM " + Weather.TABLE_NAME + " WHERE " + SqlContract.COLUMN_ZIP + " = " + "?";
 		
 		try {
 			PreparedStatement stat = connection.prepareStatement(queryRemoveString);
-			stat.setString(1, zip_code);
+			stat.setString(1, location.getZipCode());
 			stat.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();

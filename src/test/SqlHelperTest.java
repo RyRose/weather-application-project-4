@@ -21,7 +21,8 @@ import org.junit.After;
 import sql.SqlContract;
 import sql.SqlContract.Area;
 import sql.SqlContract.Weather;
-import sql.SqlHelper;
+import sql.SqlLocationHelper;
+import sql.SqlWeatherHelper;
 
 public class SqlHelperTest {
 	
@@ -29,13 +30,15 @@ public class SqlHelperTest {
 	private final String DATABASE_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
 	private int TEST_NUM = 5;
 	
-	SqlHelper helper;
+	SqlLocationHelper locationHelper;
+	SqlWeatherHelper weatherHelper;
 	Connection connection;
 	
 	@Before
 	public void Before() throws ClassNotFoundException {
 		Class.forName("org.sqlite.JDBC");
-		helper = new SqlHelper(DATABASE_NAME);
+		locationHelper = new SqlLocationHelper(DATABASE_NAME);
+		weatherHelper = new SqlWeatherHelper(DATABASE_NAME);
 		connection = getConnection();
 	}
 	
@@ -63,7 +66,7 @@ public class SqlHelperTest {
 	@Test
 	public void testLocationInsertion() throws SQLException {
 		Location location = getLocations(1).get(0);
-		helper.insertLocation(location);
+		locationHelper.insertLocation(location);
 		
 		ResultSet rs = getExecutor().executeQuery("SELECT * FROM " + Area.TABLE_NAME);
 		
@@ -76,7 +79,7 @@ public class SqlHelperTest {
 	public void testDayInsertion() throws SQLException { // TODO
 		ArrayList<Day> days = getDays(TEST_NUM);
 		
-		helper.insertDays( getLocations(1).get(0) , days);
+		weatherHelper.insertDays( getLocations(1).get(0) , days);
 		
 		ResultSet set = getExecutor().executeQuery("SELECT * FROM " + Weather.TABLE_NAME);
 		
@@ -95,42 +98,42 @@ public class SqlHelperTest {
 		ArrayList<Location> locations = getLocations(TEST_NUM);
 		
 		for( Location location : locations ) {
-			assertFalse(helper.containsLocation(location));
-			helper.insertLocation(location);
-			assertTrue(helper.containsLocation(location));
+			assertFalse(locationHelper.containsLocation(location));
+			locationHelper.insertLocation(location);
+			assertTrue(locationHelper.containsLocation(location));
 		}
 	}
 	
 	@Test
-	public void testDayInDatabase() { // TODO
+	public void testDayInDatabase() {
 		ArrayList<Day> days = getDays(TEST_NUM);
 		
 		for( Day day : days )
-			assertFalse(helper.containsDay(day));
+			assertFalse(weatherHelper.containsDay(day));
 		
-		helper.insertDays( getLocations(1).get(0) , days);
+		weatherHelper.insertDays( getLocations(1).get(0) , days);
 		
 		for (Day day : days )
-			assertTrue(helper.containsDay(day));
+			assertTrue(weatherHelper.containsDay(day));
 	}
 	
 	@Test
-	public void testDeleteWeather() throws SQLException { // TODO
+	public void testDeleteWeather() throws SQLException {
 		Location location = getLocations(1).get(0);
 		ArrayList<Day> days = getDays(TEST_NUM);
 		
-		helper.insertLocation(location);
+		locationHelper.insertLocation(location);
 		
-		helper.insertDays(location, days);
+		weatherHelper.insertDays(location, days);
 		
 		for( Day day : days) {
-			assertTrue(helper.containsDay(day));
+			assertTrue(weatherHelper.containsDay(day));
 		}
 		
-		helper.deleteWeatherData(location);
+		locationHelper.deleteWeatherData(location);
 		
 		for ( Day day : days ) {
-			assertFalse( helper.containsDay(day) );
+			assertFalse( weatherHelper.containsDay(day) );
 		}
 	}
 

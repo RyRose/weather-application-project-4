@@ -4,14 +4,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public  abstract class SqlHelper_2 {
+public  abstract class BaseSqlHelper {
 	
 	 String DATABASE_NAME;
 	 String DB_AUTHORITY;
 	
 	
 	
-	public SqlHelper_2(String database_name) {
+	public BaseSqlHelper(String database_name) {
 		DATABASE_NAME = database_name;
 		DB_AUTHORITY = "jdbc:sqlite:" + DATABASE_NAME;
 		

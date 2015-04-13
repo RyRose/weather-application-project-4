@@ -36,12 +36,12 @@ public class DatabaseManagerImpl implements DatabaseManager {
 		days = ZipcodeData.getDays(zip_code, 16);
 		
 
-		if ( !locationHelper.containsLocation( new LocationImpl(zip_code, null) ) ) // If the location does not exist in database, the location is added to database
-			locationHelper.insertLocation( new LocationImpl(zip_code, null) );
+		if ( !locationHelper.containsLocation( location ) ) // If the location does not exist in database, the location is added to database
+			locationHelper.insertLocation( location );
 		else // else, it deletes the old, out-of-date data
-			locationHelper.deleteWeatherData(zip_code);
+			locationHelper.deleteWeatherData( location );
 		
-		weatherHelper.insertDays(zip_code, days);	
+		weatherHelper.insertDays(location, days);	
 
 	}	
 }

@@ -1,6 +1,7 @@
 package sql;
 
 import interfaces.Day;
+import interfaces.Location;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +14,7 @@ import models.DayImpl;
 import sql.SqlContract.Area;
 import sql.SqlContract.Weather;
 
-public class SqlWeatherHelper extends SqlHelper_2 {
+public class SqlWeatherHelper extends BaseSqlHelper {
 	
 
 	public SqlWeatherHelper(String DB_AUTHORITY) {
@@ -80,7 +81,7 @@ public class SqlWeatherHelper extends SqlHelper_2 {
 		return days;
 	}
 	
-	public void insertDays(String zip_code, ArrayList<Day> days) {
+	public void insertDays(Location location, ArrayList<Day> days) {
 		Connection connection = getConnection();
 		PreparedStatement insertStatement;
 		
@@ -92,7 +93,7 @@ public class SqlWeatherHelper extends SqlHelper_2 {
 			insertStatement = connection.prepareStatement(insertString);
 
 			for( Day day : days) {
-				insertStatement.setString(1, zip_code);
+				insertStatement.setString(1, location.getZipCode());
 				insertStatement.setLong(2, day.getDate().getTime() );
 				insertStatement.setDouble(3,  day.getMax());
 				insertStatement.setDouble(4, day.getMin());
